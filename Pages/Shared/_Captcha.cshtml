@@ -1,0 +1,19 @@
+@using Microsoft.Extensions.Options
+@using OluRankings.Services
+@inject IOptions<CaptchaOptions> Captcha
+
+@{
+    var siteKey = Captcha.Value.SiteKey;
+}
+
+@if (string.IsNullOrWhiteSpace(siteKey))
+{
+  <div class="text-danger" style="margin:.5rem 0">
+    ⚠️ CAPTCHA site key missing. Add Captcha:SiteKey to appsettings.
+  </div>
+}
+else
+{
+  <div class="cf-turnstile" data-sitekey="@siteKey" data-theme="dark"></div>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+}

@@ -1,0 +1,45 @@
+@{
+    var title = ViewData["Title"] as string ?? "OluRankings — UK Youth Rankings";
+}
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>@title</title>
+
+  <!-- Fonts + Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/%40tabler/icons-webfont@2.47.0/tabler-icons.min.css" rel="stylesheet" />
+
+
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="min-h-full">
+  <!-- animated gradient/orb backdrop -->
+  <div class="bg-orb" aria-hidden="true"></div>
+
+  <!-- top nav -->
+  <header class="site-header glass-nav">
+    @await Html.PartialAsync("_Nav")
+  </header>
+
+  <main class="container page-wrap">
+    @RenderBody()
+  </main>
+
+  <footer class="site-footer">
+    @await Html.PartialAsync("_Footer")
+  </footer>
+
+  <!-- Quick theme toggle (matches main.js expectations) -->
+  <button id="themeToggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+    <i class="ti ti-moon-stars"></i>
+  </button>
+
+  <script src="~/js/main.js" asp-append-version="true"></script>
+  @RenderSection("Scripts", required: false)
+</body>
+</html>

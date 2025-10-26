@@ -1,0 +1,21 @@
+@page
+@model AthleteDetailsModel
+@{
+    ViewData["Title"] = $"{Model.Athlete?.GivenName} {Model.Athlete?.FamilyName}";
+}
+@if (Model.Athlete is null) { <p>Not found.</p> }
+else {
+  <article class="athlete">
+    <h1>@Model.Athlete.GivenName @Model.Athlete.FamilyName</h1>
+    <p>@Model.Athlete.School • @Model.Athlete.Region</p>
+    <div class="stats">
+      @foreach (var s in Model.Athlete.StatLines.OrderByDescending(s => s.Season))
+      {
+        <div>
+          <strong>@s.Season</strong> — PPG @s.PointsPerGame, APG @s.AssistsPerGame, RPG @s.ReboundsPerGame
+          @if (s.IsVerified) { <span class="badge">Verified</span> }
+        </div>
+      }
+    </div>
+  </article>
+}

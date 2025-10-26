@@ -1,0 +1,103 @@
+@page
+@model OluRankings.Pages.Submit.IndexModel
+@{
+    ViewData["Title"] = "Submit Athlete Profile";
+}
+
+<h1 class="page-title">Submit Athlete Profile</h1>
+
+@if (TempData["Message"] is string msg)
+{
+  <div class="alert alert-info">@msg</div>
+}
+
+<!-- Validation summary -->
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form method="post"
+      asp-antiforgery="true"
+      enctype="multipart/form-data"
+      class="form space-y-4">
+
+  <div class="row">
+    <label>
+      First name
+      <input asp-for="FirstName" required />
+      <span asp-validation-for="FirstName" class="text-danger"></span>
+    </label>
+
+    <label>
+      Last name
+      <input asp-for="LastName" required />
+      <span asp-validation-for="LastName" class="text-danger"></span>
+    </label>
+  </div>
+
+  <div class="row">
+    <label>
+      School
+      <input asp-for="School" />
+      <span asp-validation-for="School" class="text-danger"></span>
+    </label>
+
+    <label>
+      Region
+      <input asp-for="Region" />
+      <span asp-validation-for="Region" class="text-danger"></span>
+    </label>
+  </div>
+
+  <div class="row">
+    <label>
+      Position
+      <select asp-for="Position">
+        <option>Guard</option>
+        <option>Wing</option>
+        <option>Big</option>
+      </select>
+      <span asp-validation-for="Position" class="text-danger"></span>
+    </label>
+
+    <label>
+      Age Group
+      <select asp-for="AgeGroup">
+        <option>U14</option>
+        <option>U16</option>
+        <option>U18</option>
+      </select>
+      <span asp-validation-for="AgeGroup" class="text-danger"></span>
+    </label>
+  </div>
+
+  <label>
+    Highlight video URL
+    <input asp-for="VideoUrl" type="url" placeholder="YouTube/Vimeo link" />
+    <span asp-validation-for="VideoUrl" class="text-danger"></span>
+  </label>
+
+  <!-- Evidence upload (JPG/PNG/PDF, <=10MB) -->
+  <label>
+    Identity evidence (passport/ID)
+    <input asp-for="Evidence" type="file" accept=".jpg,.jpeg,.png,.pdf" />
+    <span class="hint">Accepted: JPG/PNG/PDF, max 10MB.</span>
+    <span asp-validation-for="Evidence" class="text-danger"></span>
+  </label>
+
+  <fieldset class="consent">
+    <legend>Parental consent</legend>
+    <label class="flex items-center gap-2">
+      <input asp-for="Consent" type="checkbox" required />
+      <span>I am the parent/guardian and consent to publish this information.</span>
+    </label>
+    <span asp-validation-for="Consent" class="text-danger"></span>
+  </fieldset>
+
+  <!-- CAPTCHA -->
+  <partial name="~/Pages/Shared/_Captcha.cshtml" />
+
+  <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,40 @@
+@page "{id:guid}"
+@model OluRankings.Pages.Admin.Athletes.EditModel
+@{
+    ViewData["Title"] = "Edit Player";
+}
+
+<h1>Edit Player</h1>
+
+@if (TempData["Saved"] is bool)
+{
+  <div class="alert alert-success">Saved.</div>
+}
+
+<form method="post">
+  <input type="hidden" asp-for="Athlete!.Id" />
+  <div class="grid gap-3 md:grid-cols-2">
+    <label>Given Name <input asp-for="Athlete!.GivenName" /></label>
+    <label>Family Name <input asp-for="Athlete!.FamilyName" /></label>
+    <label>Slug <input asp-for="Athlete!.Slug" /></label>
+    <label>Sport <input asp-for="Athlete!.Sport" /></label>
+    <label>Position <input asp-for="Athlete!.Position" /></label>
+    <label>Class Year <input asp-for="Athlete!.ClassYear" type="number" /></label>
+    <label>School <input asp-for="Athlete!.School" /></label>
+    <label>Club <input asp-for="Athlete!.Club" /></label>
+    <label>Region <input asp-for="Athlete!.Region" /></label>
+    <label>Height (cm) <input asp-for="Athlete!.HeightCm" type="number" /></label>
+    <label>Weight (kg) <input asp-for="Athlete!.WeightKg" type="number" /></label>
+    <label>Headshot URL <input asp-for="Athlete!.HeadshotUrl" /></label>
+    <label>Status
+      <select asp-for="Athlete!.Status">
+        <option>active</option>
+        <option>inactive</option>
+      </select>
+    </label>
+  </div>
+  <div class="mt-4">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn" asp-page="/Admin/Athletes/Index">Back</a>
+  </div>
+</form>

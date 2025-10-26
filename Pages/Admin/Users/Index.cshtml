@@ -1,0 +1,23 @@
+@page
+@model OluRankings.Pages.Admin.Users.IndexModel
+@{
+    ViewData["Title"] = "Users & Roles";
+}
+
+<h1>Users & Roles</h1>
+
+<table class="table">
+  <thead><tr><th>Email</th><th>Roles</th><th></th></tr></thead>
+  <tbody>
+  @foreach (var u in Model.Users)
+  {
+    <tr>
+      <td>@u.Email</td>
+      <td>@string.Join(", ", u.Roles)</td>
+      <td>
+        <a class="btn btn-sm btn-primary" asp-page="/Admin/Users/Edit" asp-route-id="@u.Id">Edit roles</a>
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>

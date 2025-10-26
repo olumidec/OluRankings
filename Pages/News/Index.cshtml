@@ -1,0 +1,31 @@
+@page
+@{
+    ViewData["Title"] = "Top News";
+}
+<h1 class="page-title">Top News</h1>
+<p class="muted">Latest UK youth sports headlines and notable stories.</p>
+
+<div id="newsList" class="cards"></div>
+
+@section Scripts {
+  <script>
+    (async () => {
+      const root = document.getElementById('newsList');
+      try {
+        const res = await fetch('/data/news.json', { cache:'no-cache' });
+        const items = await res.json();
+        root.innerHTML = items.map(n => `
+          <article class="card">
+            <h3 style="margin-top:0">${n.title}</h3>
+            <p class="muted">${n.meta || ''}</p>
+            <p>${n.summary || ''}</p>
+            <a class="link" href="${n.url}" target="_blank" rel="noopener">Read</a>
+          </article>
+        `).join('');
+      } catch (e) {
+        root.innerHTML = '<p class="muted">Could not load news.</p>';
+        console.error(e);
+      }
+    })();
+  </script>
+}

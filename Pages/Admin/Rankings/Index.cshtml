@@ -1,0 +1,27 @@
+@page
+@model OluRankings.Pages.Admin.Rankings.IndexModel
+@{
+    ViewData["Title"] = "Manage Rankings";
+}
+
+<h1>Manage Rankings</h1>
+
+<table class="table">
+  <thead><tr><th>Age Group</th><th>Sport</th><th>Period</th><th>Published</th><th>Entries</th><th></th></tr></thead>
+  <p><a class="btn btn-success" asp-page="/Admin/Rankings/Create">Create Ranking</a></p>
+  <tbody>
+  @foreach (var r in Model.Items)
+  {
+    <tr>
+      <td>@r.AgeGroup</td>
+      <td>@r.Sport</td>
+      <td>@r.Period</td>
+      <td>@r.PublishedAt.ToShortDateString()</td>
+      <td>@r.Entries.Count</td>
+      <td>
+        <a class="btn btn-sm btn-primary" asp-page="/Admin/Rankings/Edit" asp-route-id="@r.Id">Edit Order</a>
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>

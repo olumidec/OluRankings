@@ -1,0 +1,34 @@
+@page
+@model OluRankings.Pages.Admin.Users.EditModel
+@{
+    ViewData["Title"] = "Edit User Roles";
+}
+
+<h1>Edit User</h1>
+
+@if (Model.UserEntity is null)
+{
+  <p>User not found.</p>
+}
+else
+{
+  <form method="post">
+    <div class="mb-3">
+      <label>Email <input asp-for="Email" /></label>
+    </div>
+
+    <fieldset class="mb-3">
+      <legend>Roles</legend>
+      @foreach (var r in Model.AllRoles)
+      {
+        <label class="block">
+          <input type="checkbox" name="Roles" value="@r" @(Model.Roles.Contains(r) ? "checked" : "") />
+          @r
+        </label>
+      }
+    </fieldset>
+
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn" asp-page="/Admin/Users/Index">Back</a>
+  </form>
+}

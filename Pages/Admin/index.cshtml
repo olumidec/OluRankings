@@ -1,0 +1,14 @@
+@page
+@model OluRankings.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<h1>Admin</h1>
+
+<div class="grid gap-4">
+  <a class="btn btn-primary" asp-page="/Admin/Submissions/Index">Submissions</a>
+  <a class="btn btn-primary" asp-page="/Admin/Rankings/Index">Rankings</a>
+  <a class="btn btn-primary" asp-page="/Admin/Athletes/Index">Players</a>
+  <a class="btn btn-secondary" asp-page="/Admin/Users/Index">Users & Roles</a>
+</div>

@@ -1,0 +1,68 @@
+@page
+@model OluRankings.Pages.Rankings.RankingsIndexModel
+@{
+    ViewData["Title"] = "Rankings";
+}
+
+<h1>Rankings</h1>
+
+<form method="get" class="flex gap-3 mb-4">
+  <label>List
+    <select name="Publisher" onchange="this.form.submit()">
+      @foreach (var p in Model.Publishers)
+      {
+        <option value="@p" selected="@(Model.Publisher==p?"selected":null)">@p</option>
+      }
+    </select>
+  </label>
+
+  <label>Sport
+    <select name="Sport" onchange="this.form.submit()">
+      <option value="basketball" selected="@(Model.Sport=="basketball"?"selected":null)">Basketball</option>
+    </select>
+  </label>
+
+  <label>Age Group
+    <select name="AgeGroup" onchange="this.form.submit()">
+      <option value="U14" selected="@(Model.AgeGroup=="U14"?"selected":null)">U14</option>
+      <option value="U16" selected="@(Model.AgeGroup=="U16"?"selected":null)">U16</option>
+      <option value="U18" selected="@(Model.AgeGroup=="U18"?"selected":null)">U18</option>
+    </select>
+  </label>
+
+  <label>Period
+    <select name="Period" onchange="this.form.submit()">
+      <option value="">Latest</option>
+      @foreach (var per in Model.Periods)
+      {
+        <option value="@per" selected="@(Model.Period==per?"selected":null)">@per</option>
+      }
+    </select>
+  </label>
+</form>
+
+@if (Model.Ranking is null)
+{
+  <p>No ranking found for the selected filters.</p>
+}
+else
+{
+  <h2>@Model.Ranking.Publisher — @Model.Ranking.AgeGroup (@Model.Ranking.Period)</h2>
+  <table class="table">
+    <thead>
+      <tr><th>RK</th><th>Athlete</th><th>School/Club</th><th>Pos</th><th>Score</th></tr>
+    </thead>
+    <tbody>
+    @foreach (var e in Model.Ranking.Entries.OrderBy(x => x.Rank))
+    {
+      <tr>
+        <td>@e.Rank</td>
+        <td>@($"{e.Athlete.FamilyName}, {e.Athlete.GivenName}")</td>
+        <td>@(string.IsNullOrWhiteSpace(e.Athlete.School) ? e.Athlete.Club : e.Athlete.School)</td>
+        <td>@e.Athlete.Position</td>
+        <td>@e.Score</td>
+      </tr>
+    }
+    </tbody>
+  </table>
+}

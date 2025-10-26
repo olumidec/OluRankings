@@ -1,0 +1,46 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<OluRankings.Models.ApplicationUser> SignInManager
+@inject UserManager<OluRankings.Models.ApplicationUser> UserManager
+
+@{
+    // Helper to apply 'active' class based on current path
+    string? path = Context.Request.Path.Value?.ToLowerInvariant();
+    Func<string, string> Active = href =>
+        (path != null && path.StartsWith(href.ToLowerInvariant()))
+            ? "nav-link active"
+            : "nav-link";
+}
+
+<div class="nav">
+  <a class="brand" asp-page="/Index">OluRankings</a>
+
+  <button class="nav-toggle" aria-label="Toggle menu" id="navToggle">
+    <span></span><span></span><span></span>
+  </button>
+
+  <nav class="nav-links" id="navLinks">
+    <a class="@Active("/rankings")" asp-page="/Rankings/Index">Rankings</a>
+    <a class="@Active("/athletes")" asp-page="/Athletes/Index">Athletes</a>
+    <a class="@Active("/news")" asp-page="/News/Index">Top News</a>
+    <a class="@Active("/submit")" asp-page="/Submit/Index">Submit</a>
+
+    @if (User.IsInRole("Admin"))
+    {
+      <a class="@Active("/admin")" asp-page="/Admin/Index">Admin</a>
+    }
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+      <form id="logoutForm" class="inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Content("~/")" method="post">
+        <button type="submit" class="btn">Logout</button>
+      </form>
+    }
+    else
+    {
+      <a class="btn" asp-area="Identity" asp-page="/Account/Login">Login</a>
+      <a class="btn" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    }
+
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">◐</button>
+  </nav>
+</div>

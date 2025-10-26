@@ -1,0 +1,34 @@
+@page
+@model OluRankings.Pages.Admin.Athletes.IndexModel
+@{
+    ViewData["Title"] = "Players";
+}
+
+<h1>Players</h1>
+
+<form method="get" class="mb-3">
+  <input type="text" name="q" value="@Request.Query["q"]" placeholder="Search name / school / club" />
+  <button class="btn btn-secondary" type="submit">Search</button>
+</form>
+
+<table class="table">
+  <thead>
+    <tr><th>Name</th><th>School</th><th>Club</th><th>Pos</th><th>Class</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody>
+  @foreach (var a in Model.Items)
+  {
+    <tr>
+      <td>@a.FamilyName, @a.GivenName</td>
+      <td>@a.School</td>
+      <td>@a.Club</td>
+      <td>@a.Position</td>
+      <td>@a.ClassYear</td>
+      <td>@a.Status</td>
+      <td>
+        <a class="btn btn-sm btn-primary" asp-page="/Admin/Athletes/Edit" asp-route-id="@a.Id">Edit</a>
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>
