@@ -104,21 +104,28 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireCoach",  p => p.RequireRole("Coach"));
 
     options.AddPolicy("CanManageOwnTeam", p =>
-        p.RequireAssertion(ctx =>
+    p.RequireAssertion(ctx =>
+    {
+        var user = ctx.User;
+        if (!user.IsInRole("Coach")) return false;
+
+        var http = ctx.Resource as HttpContext;
+
+        string? routeTeamId = null;
+        if (http != null &&
+            http.Request.RouteValues.TryGetValue("teamId", out var routeVal))
         {
-            var user = ctx.User;
-            if (!user.IsInRole("Coach")) return false;
+            routeTeamId = routeVal?.ToString();
+        }
 
-            var http = ctx.Resource as HttpContext;
-            var ok = http?.Request.RouteValues.TryGetValue("teamId", out var v) ?? false;
-            var routeTeamId = ok ? v?.ToString() : null;
-            var claimTeamId = user.Claims.FirstOrDefault(c => c.Type == "TeamId")?.Value;
+        var claimTeamId = user.Claims.FirstOrDefault(c => c.Type == "TeamId")?.Value;
 
-            return !string.IsNullOrEmpty(routeTeamId)
-                   && !string.IsNullOrEmpty(claimTeamId)
-                   && routeTeamId == claimTeamId;
-        })
-    );
+        return !string.IsNullOrEmpty(routeTeamId)
+               && !string.IsNullOrEmpty(claimTeamId)
+               && routeTeamId == claimTeamId;
+    })
+);
+
 });
 
 // (Optional) App Insights
