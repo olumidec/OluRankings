@@ -1,44 +1,44 @@
 // Program.cs
 using System.Linq;
-using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
 
 using OluRankings.Identity;
 using OluRankings.Models;
 using OluRankings.Services;
 using OluRankings.Data; // ApplicationDbContext
 
-// Type aliases
+// Aliases
 using CaptchaOptions = OluRankings.Services.CaptchaOptions;
 using NoOpEmailSender = OluRankings.Services.NoOpEmailSender;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Toggle DB init/migrate with env var SkipDb=true
 var skipDb = builder.Configuration.GetValue<bool>("SkipDb");
 
-// 1) Razor Pages
+// --------------------------- Services ---------------------------------
+
+// Razor Pages
 builder.Services.AddRazorPages();
 
-// 2) Cloudflare Turnstile
+// HTTP client (Turnstile + SendGrid client wrappers)
 builder.Services.AddHttpClient();
+
+// Cloudflare Turnstile
 builder.Services.Configure<CaptchaOptions>(builder.Configuration.GetSection("Captcha"));
 builder.Services.AddSingleton<ICaptchaValidator, TurnstileCaptchaValidator>();
 
-// 3) Databases (IdentityDb + AppDb)
+// Databases (Identity + App)
 builder.Services.AddDbContext<IdentityDb>(opts =>
 {
     var cs = builder.Configuration.GetConnectionString("IdentityDb");
-    if (builder.Environment.IsDevelopment())
-        opts.UseSqlite(cs);
-    else
-        opts.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")!);
+    if (builder.Environment.IsDevelopment()) opts.UseSqlite(cs);
+    else opts.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")!);
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(opts =>
@@ -49,7 +49,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(opts =>
         opts.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")!);
 });
 
-// 4) Identity (+ Roles)
+// Identity (+Roles)
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
@@ -66,18 +66,37 @@ builder.Services
 // Claims factory (TeamId → claim)
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, TeamIdClaimsPrincipalFactory>();
 
-// Email sender (stub for now)
-builder.Services.AddSingleton<IEmailSender, NoOpEmailSender>();
+// --------------------------- Email (SendGrid / No-Op) -----------------
 
-// 6) Cookies
+// Bind mail options from env (Render UI):
+// SENDGRID_API_KEY, MAIL__FROM_EMAIL, MAIL__FROM_NAME
+builder.Services.Configure<MailOptions>(o =>
+{
+    o.ApiKey    = builder.Configuration["SENDGRID_API_KEY"];
+    o.FromEmail = builder.Configuration["MAIL:FROM_EMAIL"];
+    o.FromName  = builder.Configuration["MAIL:FROM_NAME"];
+});
+
+// Choose the implementation automatically
+if (!string.IsNullOrWhiteSpace(builder.Configuration["SENDGRID_API_KEY"]))
+{
+    builder.Services.AddSingleton<IEmailSender, SendGridEmailSender>();
+}
+else
+{
+    builder.Services.AddSingleton<IEmailSender, NoOpEmailSender>();
+}
+
+// Cookies
 builder.Services.ConfigureApplicationCookie(o =>
 {
     o.LoginPath = "/Identity/Account/Login";
     o.AccessDeniedPath = "/AccessDenied";
     o.SlidingExpiration = true;
+    o.Cookie.SameSite = SameSiteMode.Lax;
 });
 
-// 7) Authorization policies
+// Authorization policies
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAdmin",  p => p.RequireRole("Admin"));
@@ -91,10 +110,8 @@ builder.Services.AddAuthorization(options =>
             if (!user.IsInRole("Coach")) return false;
 
             var http = ctx.Resource as HttpContext;
-            var routeTeamId = http?.Request.RouteValues.TryGetValue("teamId", out var v) == true
-                ? v?.ToString()
-                : null;
-
+            var ok = http?.Request.RouteValues.TryGetValue("teamId", out var v) ?? false;
+            var routeTeamId = ok ? v?.ToString() : null;
             var claimTeamId = user.Claims.FirstOrDefault(c => c.Type == "TeamId")?.Value;
 
             return !string.IsNullOrEmpty(routeTeamId)
@@ -104,12 +121,14 @@ builder.Services.AddAuthorization(options =>
     );
 });
 
-// 8) (Optional) App Insights
+// (Optional) App Insights
 builder.Services.AddApplicationInsightsTelemetry();
+
+// --------------------------- Pipeline ---------------------------------
 
 var app = builder.Build();
 
-// 9) Migrate & seed (both DBs) — OPTIONAL
+// DB migrate/seed (disable with SkipDb=true)
 if (!skipDb)
 {
     using var scope = app.Services.CreateScope();
@@ -127,7 +146,7 @@ if (!skipDb)
     catch (Exception ex)
     {
         Console.WriteLine("❌ DB startup/migration failed:");
-        Console.WriteLine(ex.ToString());
+        Console.WriteLine(ex);
         throw;
     }
 }
@@ -136,15 +155,17 @@ else
     Console.WriteLine("⚠️ Skipping database initialization (SkipDb=true).");
 }
 
-// 10) Prod middlewares
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 
+    // Trust Cloudflare/Render proxy headers
     app.UseForwardedHeaders(new ForwardedHeadersOptions
     {
-        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+        RequireHeaderSymmetry = false,
+        ForwardLimit = null
     });
 }
 
