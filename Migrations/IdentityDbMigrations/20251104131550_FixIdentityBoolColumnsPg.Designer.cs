@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OluRankings.Identity;
 
@@ -10,9 +11,11 @@ using OluRankings.Identity;
 namespace OluRankings.Migrations.IdentityDbMigrations
 {
     [DbContext(typeof(IdentityDb))]
-    partial class IdentityDbModelSnapshot : ModelSnapshot
+    [Migration("20251104131550_FixIdentityBoolColumnsPg")]
+    partial class FixIdentityBoolColumnsPg
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.18");
