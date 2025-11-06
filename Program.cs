@@ -104,27 +104,27 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireCoach",  p => p.RequireRole("Coach"));
 
     options.AddPolicy("CanManageOwnTeam", p =>
-    p.RequireAssertion(ctx =>
-    {
-        var user = ctx.User;
-        if (!user.IsInRole("Coach")) return false;
-
-        var http = ctx.Resource as HttpContext;
-
-        string? routeTeamId = null;
-        if (http != null &&
-            http.Request.RouteValues.TryGetValue("teamId", out var routeVal))
+        p.RequireAssertion(ctx =>
         {
-            routeTeamId = routeVal?.ToString();
-        }
+            var user = ctx.User;
+            if (!user.IsInRole("Coach")) return false;
 
-        var claimTeamId = user.Claims.FirstOrDefault(c => c.Type == "TeamId")?.Value;
+            var http = ctx.Resource as HttpContext;
 
-        return !string.IsNullOrEmpty(routeTeamId)
-               && !string.IsNullOrEmpty(claimTeamId)
-               && routeTeamId == claimTeamId;
-    })
-);
+            string? routeTeamId = null;
+            if (http != null &&
+                http.Request.RouteValues.TryGetValue("teamId", out var routeVal))
+            {
+                routeTeamId = routeVal?.ToString();
+            }
+
+            var claimTeamId = user.Claims.FirstOrDefault(c => c.Type == "TeamId")?.Value;
+
+            return !string.IsNullOrEmpty(routeTeamId)
+                   && !string.IsNullOrEmpty(claimTeamId)
+                   && routeTeamId == claimTeamId;
+        })
+    );
 
 });
 
@@ -143,6 +143,46 @@ if (!skipDb)
     {
         var idDb  = scope.ServiceProvider.GetRequiredService<IdentityDb>();
         await idDb.Database.MigrateAsync();
+
+        // --- NEW: one-time safety fix to convert Identity 0/1 ints -> booleans ---
+        try
+        {
+            var conn = idDb.Database.GetDbConnection();
+            await conn.OpenAsync();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = @"
+DO $$
+BEGIN
+    -- Only run if EmailConfirmed is not already boolean
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name   = 'AspNetUsers'
+          AND column_name  = 'EmailConfirmed'
+          AND data_type    <> 'boolean'
+    ) THEN
+        ALTER TABLE ""AspNetUsers""
+            ALTER COLUMN ""EmailConfirmed""       TYPE boolean USING (""EmailConfirmed"" <> 0),
+            ALTER COLUMN ""PhoneNumberConfirmed"" TYPE boolean USING (""PhoneNumberConfirmed"" <> 0),
+            ALTER COLUMN ""TwoFactorEnabled""     TYPE boolean USING (""TwoFactorEnabled"" <> 0),
+            ALTER COLUMN ""LockoutEnabled""       TYPE boolean USING (""LockoutEnabled"" <> 0);
+
+        ALTER TABLE ""AspNetUsers""
+            ALTER COLUMN ""EmailConfirmed""       SET DEFAULT false,
+            ALTER COLUMN ""PhoneNumberConfirmed"" SET DEFAULT false,
+            ALTER COLUMN ""TwoFactorEnabled""     SET DEFAULT false,
+            ALTER COLUMN ""LockoutEnabled""       SET DEFAULT false;
+    END IF;
+END $$;";
+            await cmd.ExecuteNonQueryAsync();
+            Console.WriteLine("✅ Identity bool columns verified/fixed.");
+        }
+        catch (Exception fixEx)
+        {
+            Console.WriteLine("⚠️ Identity bool column fix skipped/failed: " + fixEx.Message);
+        }
+        // --------------------------------------------------------------------------
 
         var appDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await appDb.Database.MigrateAsync();
