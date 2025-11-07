@@ -57,7 +57,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(opts =>
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
-        options.SignIn.RequireConfirmedAccount = !builder.Environment.IsDevelopment();
+        options.SignIn.RequireConfirmedAccount = false;
         options.Password.RequiredLength = 8;
         options.Password.RequireDigit = true;
         options.Password.RequireUppercase = true;
