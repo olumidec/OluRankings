@@ -18,8 +18,12 @@ using NoOpEmailSender = OluRankings.Services.NoOpEmailSender;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Toggle DB init/migrate with env var SkipDb=true
-var skipDb = builder.Configuration.GetValue<bool>("SkipDb");
+// Optional: quiet a common Npgsql timestamp warning
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+// Env toggles
+var skipDb     = builder.Configuration.GetValue<bool>("SkipDb");
+var showErrors = builder.Configuration.GetValue<bool>("SHOW_ERRORS");
 
 // --------------------------- Services ---------------------------------
 
@@ -144,7 +148,7 @@ if (!skipDb)
         var idDb  = scope.ServiceProvider.GetRequiredService<IdentityDb>();
         await idDb.Database.MigrateAsync();
 
-        // --- NEW: one-time safety fix to convert Identity 0/1 ints -> booleans ---
+        // --- ONE-TIME GUARD: convert Identity 0/1 ints → booleans IF still wrong ---
         try
         {
             var conn = idDb.Database.GetDbConnection();
@@ -204,8 +208,11 @@ else
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    if (showErrors) app.UseDeveloperExceptionPage(); else
+    {
+        app.UseExceptionHandler("/Error");
+        app.UseHsts();
+    }
 
     // Trust Cloudflare/Render proxy headers
     app.UseForwardedHeaders(new ForwardedHeadersOptions
