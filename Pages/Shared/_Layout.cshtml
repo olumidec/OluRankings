@@ -20,6 +20,11 @@
 <body class="min-h-full">
   <!-- animated gradient/orb backdrop -->
   <div class="bg-orb" aria-hidden="true"></div>
+  @if (User.IsInRole("Admin"))
+{
+    <a class="nav-link" asp-page="/Admin/Users/Index">Admin</a>
+}
+
 
   <!-- top nav -->
   <header class="site-header glass-nav">
