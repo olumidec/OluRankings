@@ -1,46 +1,54 @@
 @page
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Official UK Youth Rankings";
 }
-
-<div class="container">
-  <!-- HERO -->
-  <header class="hero">
-    <video autoplay loop muted playsinline>
-      <source src="/videos/hero-loop.mp4" type="video/mp4" />
-    </video>
+<section class="hero">
     <div class="hero-inner">
-      <h1>Official UK Youth Rankings</h1>
-      <p>Verified stats, athlete profiles, and showcase visibility — starting with Basketball (U14/U16).</p>
-      <div class="hero-actions">
-        <a class="btn" asp-page="/Rankings/Index">View Rankings</a>
-        <a class="btn btn--ghost" asp-page="/Athletes/Create">Submit Profile</a>
-      </div>
+        <div class="eyebrow">Basketball • U14/U16 (expanding soon)</div>
+        <h1>Official UK Youth Rankings</h1>
+        <p class="sub">
+            Verified stats, athlete profiles, and showcase visibility — transparent and versioned updates.
+        </p>
+        <div class="hero-actions">
+            <a class="btn solid lg" asp-page="/Rankings/Index">View Rankings</a>
+            <a class="btn ghost lg" asp-page="/Submit/Index">Submit Profile</a>
+        </div>
     </div>
-  </header>
+    <div class="hero-bg"></div>
+</section>
 
-  <!-- Feature rows -->
-  <section class="section">
-    <div class="feature card">
-      <h3>Rankings</h3>
-      <p>Search by age group, position, and region. Transparent methodology and versioned updates.</p>
-      <a asp-page="/Rankings/Index">Explore</a>
-    </div>
-  </section>
+<section class="cards">
+    <article class="card">
+        <h3>Rankings</h3>
+        <p>Search by age group, position, and region. Transparent methodology and versioned updates.</p>
+        <a class="link" asp-page="/Rankings/Index">Explore</a>
+    </article>
+    <article class="card">
+        <h3>Athlete Profiles</h3>
+        <p>Showcase measurables, highlights, and verified badges for trusted data.</p>
+        <a class="link" asp-page="/Athletes/Index">Browse</a>
+    </article>
+    <article class="card">
+        <h3>Submit & Verify</h3>
+        <p>Players, parents, and coaches can submit profiles; verifiers confirm with evidence.</p>
+        <a class="link" asp-page="/Submit/Index">Start</a>
+    </article>
+</section>
 
-  <section class="section">
-    <div class="feature card">
-      <h3>Athlete Profiles</h3>
-      <p>Showcase measurables, highlights, and verified badges for trusted data.</p>
-      <a asp-page="/Athletes/Index">Browse</a>
+<section class="section">
+    <div class="section-head">
+        <h2>Trending Highlights</h2>
+        <div class="muted">Pulled from <code>/wwwroot/data/highlights.json</code></div>
     </div>
-  </section>
 
-  <section class="section">
-    <div class="feature card">
-      <h3>Submit &amp; Verify</h3>
-      <p>Submit your profile or stats. Our verification flow keeps the platform fair and credible.</p>
-      <a asp-page="/Submit/Index">Start</a>
-    </div>
-  </section>
-</div>
+    <div id="highlightsGrid" class="grid highlights"></div>
+
+    <!-- Video Modal -->
+    <dialog id="videoModal" class="modal">
+        <button class="modal-close" aria-label="Close">&times;</button>
+        <div class="modal-body">
+            <div class="modal-player" id="modalPlayer"></div>
+            <div id="modalTitle" class="modal-title"></div>
+        </div>
+    </dialog>
+</section>
