@@ -4,71 +4,43 @@
     ViewData["Title"] = "Register";
 }
 
-<section class="auth">
-  <div class="auth-card">
-    <div class="stack">
-      <span class="badge">Create account</span>
-      <h1>Join OluRankings</h1>
-      <p class="muted">Build an athlete profile, follow rankings, and get verified.</p>
-    </div>
+<section class="form-wrap">
+  <div class="form-card">
+    <h1 class="form-title">Create your account</h1>
+    <p class="form-sub">Join OluRankings to submit profiles, follow rankings, and more.</p>
 
-    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="stack">
+    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form">
       <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-      <div class="form-row">
-        <label class="label" asp-for="Input.Email">Email</label>
-        <input class="input" asp-for="Input.Email" autocomplete="username" aria-required="true" placeholder="you@example.com" />
-        <span asp-validation-for="Input.Email" class="text-danger helper"></span>
+      <div class="field">
+        <label asp-for="Input.Email">Email</label>
+        <input asp-for="Input.Email" autocomplete="username" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
       </div>
 
-      <div class="form-row">
-        <label class="label" asp-for="Input.Password">Password</label>
-        <input class="input" asp-for="Input.Password" autocomplete="new-password" aria-required="true" placeholder="••••••••" />
-        <span asp-validation-for="Input.Password" class="text-danger helper"></span>
+      <div class="field">
+        <label asp-for="Input.Password">Password</label>
+        <input asp-for="Input.Password" autocomplete="new-password" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
       </div>
 
-      <div class="form-row">
-        <label class="label" asp-for="Input.ConfirmPassword">Confirm password</label>
-        <input class="input" asp-for="Input.ConfirmPassword" autocomplete="new-password" aria-required="true" placeholder="••••••••" />
-        <span asp-validation-for="Input.ConfirmPassword" class="text-danger helper"></span>
+      <div class="field">
+        <label asp-for="Input.ConfirmPassword">Confirm password</label>
+        <input asp-for="Input.ConfirmPassword" autocomplete="new-password" />
+        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
       </div>
 
-      <!-- CAPTCHA (kept exactly as your project uses it) -->
-      <div class="turnstile-wrapper">
+      <div class="auth-captcha">
         <partial name="~/Pages/Shared/_Captcha.cshtml" />
       </div>
 
-      <button id="registerSubmit" type="submit" class="btn">Create account</button>
-    </form>
+      <button id="registerSubmit" type="submit" class="btn form-submit">Create account</button>
 
-    <!-- External providers block preserved -->
-    <section style="margin-top:1rem">
-      <h3 class="muted" style="margin:0 0 .4rem">Use another service to register</h3>
-      <hr />
-      @{
-          if ((Model.ExternalLogins?.Count ?? 0) == 0)
-          {
-              <div class="helper">
-                  There are no external authentication services configured.
-                  See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article</a> to set them up.
-              </div>
-          }
-          else
-          {
-              <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="stack" style="flex-direction:row; flex-wrap:wrap; gap:.6rem">
-                  @foreach (var provider in Model.ExternalLogins!)
-                  {
-                      <button type="submit" class="btn btn--outline" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
-                          @provider.DisplayName
-                      </button>
-                  }
-              </form>
-          }
-      }
-    </section>
+      <div class="auth-links" style="display:flex;gap:12px;justify-content:flex-end;margin-top:10px">
+        <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Already have an account?</a>
+      </div>
+    </form>
   </div>
 </section>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

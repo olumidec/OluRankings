@@ -1,200 +1,100 @@
-/* ===========================
-   OluRankings – 2025 Redesign
-   =========================== */
-
-/* ---- CSS Variables ---- */
+/* ====== Design Tokens ====== */
 :root{
-  --bg:#0b0f14;               /* page background */
-  --bg-2:#0e131a;             /* deeper panels */
-  --text:#e8eef7;
-  --muted:#9db0c6;
-  --line:rgba(255,255,255,.08);
-  --panel:rgba(255,255,255,.05);
-  --panel-2:rgba(255,255,255,.07);
-  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --bg:#0b0c10;
+  --card:#14161b;
+  --card-2:#191c22;
+  --border:#232836;
+  --muted:#9aa3b2;
+  --fg:#ecf0ff;
+  --brand:#7cf5a1;        /* accent */
+  --brand-2:#8ad8ff;      /* secondary accent */
+  --danger:#ff6b6b;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
   --radius:16px;
-  --radius-lg:22px;
-
-  /* Accent = energetic basketball red with neon edge */
-  --accent:#e11d48;           /* primary */
-  --accent-2:#fb7185;         /* hover / glow */
-  --accent-3:#ffb703;         /* subtle highlight */
-
-  /* Card glow gradient */
-  --glow: radial-gradient(1000px 600px at 10% 10%, rgba(255, 68, 68,.12), transparent 55%),
-          radial-gradient(900px 600px at 90% 0%, rgba(251, 113, 133,.10), transparent 60%),
-          radial-gradient(800px 600px at 50% 110%, rgba(255, 183, 3,.08), transparent 60%);
 }
-
-/* ---- Reset / base ---- */
 *{box-sizing:border-box}
 html,body{height:100%}
-html{scroll-behavior:smooth}
 body{
-  margin:0;
-  color:var(--text);
-  background:
-    radial-gradient(1200px 800px at 10% -10%, #111827 0%, transparent 60%),
-    radial-gradient(1200px 800px at 110% 0%, #0a0f17 0%, transparent 60%),
-    var(--bg);
-  font:500 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+  margin:0; color:var(--fg); background:radial-gradient(1200px 700px at 20% -10%,#16304a 0%,transparent 55%),
+                               radial-gradient(1200px 700px at 120% 10%,#1c2a2d 0%,transparent 55%),
+                               var(--bg);
+  font:16px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
 }
 
-/* ---- Utilities ---- */
-.container{
-  width:min(1200px, 92%);
-  margin-inline:auto;
-}
-.stack{display:flex; flex-direction:column; gap:1rem}
-.grid{display:grid; gap:1.1rem}
-.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-@media (max-width: 920px){ .grid-3{grid-template-columns:1fr}; .grid-2{grid-template-columns:1fr} }
-
-.muted{color:var(--muted)}
-.badge{
-  display:inline-flex; align-items:center; gap:.5rem;
-  padding:.35rem .6rem; border-radius:999px; font-size:.8rem;
-  color:#fff; background:linear-gradient(90deg, var(--accent), var(--accent-2));
-}
-
-/* ---- Top nav ---- */
-.header{
-  position:sticky; top:0; z-index:50;
-  backdrop-filter:saturate(130%) blur(8px);
-  background:color-mix(in oklab, var(--bg) 88%, black 12%);
-  border-bottom:1px solid var(--line);
-  transition: box-shadow .2s ease, background .2s ease;
-}
-.header.scrolled{ box-shadow: var(--shadow); background:color-mix(in oklab, var(--bg) 80%, black 20%); }
-.nav{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 0;
-}
-.nav__brand{
-  display:flex; align-items:center; gap:.7rem; font-weight:800; letter-spacing:.2px;
-}
-.nav__brand-dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
-.nav__links{display:flex; gap:1rem; align-items:center}
-.nav__link{
-  padding:.6rem .9rem; border-radius:10px; color:var(--text);
-  text-decoration:none; border:1px solid transparent; transition:.2s ease;
-}
-.nav__link:hover{ background:var(--panel); border-color:var(--line) }
-.nav__cta{ margin-left:.4rem }
-
-/* ---- Buttons ---- */
-.btn{
-  --bg:linear-gradient(180deg, var(--accent), var(--accent-2));
-  display:inline-flex; align-items:center; justify-content:center;
-  gap:.5rem; padding:.8rem 1.05rem;
-  border-radius:14px; border:1px solid transparent; color:white;
-  text-decoration:none; font-weight:700; letter-spacing:.2px;
-  transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
-  background:var(--bg);
-  box-shadow: 0 6px 18px rgba(225, 17, 72, .28);
-}
-.btn:hover{ transform:translateY(-1px); box-shadow:0 10px 26px rgba(225, 17, 72, .38) }
-.btn:active{ transform:translateY(0) scale(.99) }
-.btn--ghost{
-  background:transparent; color:var(--text);
-  border:1px solid var(--line); box-shadow:none;
-}
-.btn--ghost:hover{ background:var(--panel) }
-.btn--outline{
-  background:transparent; color:var(--accent);
-  border:1.5px solid color-mix(in oklab, var(--accent) 60%, white 20%);
-  box-shadow:none;
-}
-.btn--outline:hover{ background:color-mix(in oklab, var(--accent) 12%, transparent) }
-
-/* ---- Hero ---- */
-.hero{
-  position:relative; isolation:isolate; overflow:hidden;
-  padding:72px 0 36px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0) 40%),
-    var(--glow);
-}
-.hero__title{
-  font-weight:900; letter-spacing:.3px;
-  font-size: clamp(28px, 3.5vw, 46px);
-  margin:0 0 .6rem 0;
-}
-.hero__lead{color:var(--muted); max-width:58ch}
-
-/* ---- Cards / sections ---- */
-.section{
-  padding: 28px 0 38px;
-}
+/* ====== Layout ====== */
+.container{width:min(1200px,92vw); margin-inline:auto}
+.section{margin:24px 0}
 .card{
-  position:relative; background:linear-gradient(180deg, var(--panel-2), var(--panel));
-  border:1px solid var(--line); border-radius:var(--radius-lg);
-  padding:18px 18px 20px; box-shadow: var(--shadow);
-  transition: transform .18s ease, border-color .18s ease, background .3s ease;
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.00)) , var(--card);
+  border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
 }
-.card:hover{ transform:translateY(-4px); border-color: color-mix(in oklab, var(--accent) 30%, var(--line)) }
-.card h3{ margin:.1rem 0 .35rem; font-size:1.1rem }
-.card__row{display:flex; justify-content:space-between; align-items:center}
+.card--flat{box-shadow:none}
 
-/* ---- Feature rows (home) ---- */
-.feature{
-  display:flex; align-items:stretch; gap:1.2rem; padding:1.2rem; border-radius:var(--radius);
-  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
-  border:1px solid var(--line);
+/* ====== Header / Nav ====== */
+.site-header{
+  position:sticky; top:0; z-index:100; backdrop-filter:saturate(140%) blur(8px);
+  background:rgba(10,12,16,.6); border-bottom:1px solid rgba(255,255,255,.06);
 }
-.feature__body{ flex:1 }
-.feature__kicker{ font-size:.82rem; letter-spacing:.25px; color:var(--accent-2) }
+.navbar{display:flex; align-items:center; gap:18px; height:64px}
+.brand{font-weight:800; letter-spacing:.2px}
+.nav-links{display:flex; gap:18px; margin-left:auto}
+.nav-links a{color:var(--muted); text-decoration:none; padding:8px 10px; border-radius:10px}
+.nav-links a:hover{color:var(--fg); background:rgba(255,255,255,.04)}
+.cta{display:flex; gap:10px}
+.btn{
+  appearance:none; border:0; padding:10px 16px; border-radius:12px; cursor:pointer; font-weight:700;
+  color:#0a0a0a; background:linear-gradient(180deg, var(--brand), #62e68c);
+  box-shadow:0 6px 20px rgba(124,245,161,.25);
+}
+.btn--ghost{
+  background:transparent; color:var(--fg); border:1px solid var(--border);
+}
+.btn--ghost:hover{border-color:#2f3a4e; background:#10131a}
 
-/* ---- Auth (Login/Register) ---- */
-.auth{
-  min-height:calc(100dvh - 72px);
-  display:grid; place-items:center; padding:36px 0 64px;
-  background:
-    radial-gradient(600px 400px at 20% 0%, rgba(225,17,72,.12), transparent 60%),
-    radial-gradient(700px 480px at 90% 10%, rgba(255,183,3,.10), transparent 60%);
+/* ====== HERO with video ====== */
+.hero{
+  position:relative; border-radius:22px; overflow:hidden; margin:28px 0;
+  background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.75));
 }
-.auth-card{
-  width:min(520px, 92%); padding:28px 26px;
-  border-radius:20px; background:linear-gradient(180deg, var(--panel-2), var(--panel));
-  border:1px solid var(--line); box-shadow: var(--shadow);
+.hero video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(110%) contrast(105%) brightness(90%)}
+.hero::after{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(60% 60% at 20% 10%, rgba(124,245,161,.25) 0%, transparent 60%),
+             radial-gradient(60% 60% at 80% 0%, rgba(138,216,255,.22) 0%, transparent 55%),
+             linear-gradient(0deg,rgba(10,12,16,.65),rgba(10,12,16,.50));
 }
-.auth-card h1{
-  margin:.1rem 0 .4rem; font-size: clamp(22px, 2.6vw, 30px); letter-spacing:.2px
-}
-.form-row{display:flex; flex-direction:column; gap:.45rem; margin:.65rem 0}
-.label{font-size:.9rem; color:var(--muted)}
-.input{
-  width:100%; padding: .85rem .95rem; color:var(--text);
-  border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.03);
-  outline:none; transition:border-color .15s ease, box-shadow .15s ease;
-}
-.input:focus{ border-color: color-mix(in oklab, var(--accent) 50%, var(--line)); box-shadow:0 0 0 4px rgba(225,17,72,.12)}
-.helper{font-size:.82rem; color:var(--muted)}
+.hero-inner{position:relative; padding:56px; min-height:300px; display:grid; align-content:center; gap:14px}
+.hero h1{margin:0; font-size:clamp(28px,4vw,44px); letter-spacing:.2px}
+.hero p{margin:6px 0 18px; color:var(--muted); max-width:720px}
+.hero-actions{display:flex; gap:12px; flex-wrap:wrap}
+.hero .btn{border-radius:14px; padding:12px 18px}
 
-.form-actions{ display:flex; gap:.6rem; align-items:center; justify-content:space-between; margin-top:1rem }
-.form-actions .left{ display:flex; gap:.6rem; align-items:center; color:var(--muted); font-size:.9rem }
-.checkbox{ accent-color: var(--accent) }
+/* ====== Home “feature rows” ====== */
+.feature{padding:22px; border-radius:18px; background:var(--card-2); border:1px solid var(--border)}
+.feature h3{margin:0 0 6px}
+.feature p{margin:0 0 8px; color:var(--muted)}
+.feature a{color:var(--brand); text-decoration:none}
 
-.turnstile-wrapper{ margin:.7rem 0 }
-
-/* ---- Tables (admin/users later) ---- */
-.table{
-  width:100%; border-collapse:separate; border-spacing:0 10px;
+/* ====== Forms (Login / Register) ====== */
+.form-wrap{display:grid; place-items:center; min-height:68vh; padding:24px}
+.form-card{width:min(480px,92vw); background:var(--card); border:1px solid var(--border); border-radius:18px; padding:22px; box-shadow:var(--shadow)}
+.form-title{margin:0 0 6px; font-size:28px; font-weight:800}
+.form-sub{margin:0 0 16px; color:var(--muted)}
+.form{display:grid; gap:12px}
+.field{display:grid; gap:6px}
+.field input{
+  width:100%; padding:12px 12px; border-radius:12px; background:#0e1015; color:var(--fg);
+  border:1px solid #1e2433; outline:none;
 }
-.table thead th{ text-align:left; font-size:.86rem; color:var(--muted); padding:0 .6rem }
-.table tbody tr{
-  background:linear-gradient(180deg, var(--panel-2), var(--panel));
-  border:1px solid var(--line); border-radius:12px; overflow:hidden;
-}
-.table tbody td{ padding:14px .8rem; border-top:1px solid var(--line) }
+.field input:focus{border-color:#2e3950; box-shadow:0 0 0 4px rgba(138,216,255,.10)}
+.form-aux{display:flex; justify-content:space-between; align-items:center; gap:10px; color:var(--muted)}
+.form-submit{margin-top:4px}
 
-/* ---- Footer ---- */
-.footer{
-  border-top:1px solid var(--line); padding:22px 0; color:var(--muted)
-}
+/* ====== Footer ====== */
+.footer{margin:24px 0 40px; color:var(--muted); text-align:center}
 
-/* ---- Small niceties ---- */
-a{ color: color-mix(in oklab, var(--accent) 70%, white 15%); text-decoration:none }
-a:hover{text-decoration:underline}
-hr{ border:0; height:1px; background:var(--line) }
+/* ====== Small ====== */
+@media (max-width: 720px){
+  .nav-links{display:none}
+  .hero-inner{padding:28px}
+}

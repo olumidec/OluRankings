@@ -1,43 +1,46 @@
 @page
 @{
-    ViewData["Title"] = "Official UK Youth Rankings";
+    ViewData["Title"] = "Home";
 }
 
-<section class="hero">
-  <h1>Official UK Youth Rankings</h1>
-  <p class="lead">Verified stats, athlete profiles, and showcase visibility — starting with Basketball (U14/U16).</p>
-  <div class="hero-actions">
-    <a class="btn btn-primary" asp-page="/Rankings/Index">View Rankings</a>
-    <a class="btn" asp-page="/Submit/Index">Submit Profile</a>
-  </div>
-</section>
+<div class="container">
+  <!-- HERO -->
+  <header class="hero">
+    <video autoplay loop muted playsinline>
+      <source src="/videos/hero-loop.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-inner">
+      <h1>Official UK Youth Rankings</h1>
+      <p>Verified stats, athlete profiles, and showcase visibility — starting with Basketball (U14/U16).</p>
+      <div class="hero-actions">
+        <a class="btn" asp-page="/Rankings/Index">View Rankings</a>
+        <a class="btn btn--ghost" asp-page="/Athletes/Create">Submit Profile</a>
+      </div>
+    </div>
+  </header>
 
-<section class="grid-3">
-  <article class="card">
-    <h3>Rankings</h3>
-    <p>Search by age group, position, and region. Transparent methodology and versioned updates.</p>
-    <a class="link" asp-page="/Rankings/Index">Explore</a>
-  </article>
-  <article class="card">
-    <h3>Athlete Profiles</h3>
-    <p>Showcase stats, measurables, and highlights. “Verified” badges for trusted data.</p>
-    <a class="link" asp-page="/Athletes/Index">Browse</a>
-  </article>
-  <article class="card">
-    <h3>Submit & Verify</h3>
-    <p>Parents/coaches can submit updates. Verification pipeline keeps it fair.</p>
-    <a class="link" asp-page="/Submit/Index">Submit</a>
-  </article>
-</section>
+  <!-- Feature rows -->
+  <section class="section">
+    <div class="feature card">
+      <h3>Rankings</h3>
+      <p>Search by age group, position, and region. Transparent methodology and versioned updates.</p>
+      <a asp-page="/Rankings/Index">Explore</a>
+    </div>
+  </section>
 
-<!-- Trending Highlights -->
-<section class="section">
-  <div class="section-head">
-    <h2>Trending Highlights</h2>
-    <a class="link" asp-page="/Athletes/Index">See more</a>
-  </div>
+  <section class="section">
+    <div class="feature card">
+      <h3>Athlete Profiles</h3>
+      <p>Showcase measurables, highlights, and verified badges for trusted data.</p>
+      <a asp-page="/Athletes/Index">Browse</a>
+    </div>
+  </section>
 
-  <div id="highlightsGrid" class="highlights-grid">
-    <!-- JS injects cards from /wwwroot/data/highlights.json -->
-  </div>
-</section>
+  <section class="section">
+    <div class="feature card">
+      <h3>Submit &amp; Verify</h3>
+      <p>Submit your profile or stats. Our verification flow keeps the platform fair and credible.</p>
+      <a asp-page="/Submit/Index">Start</a>
+    </div>
+  </section>
+</div>

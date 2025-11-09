@@ -1,50 +1,44 @@
-@{
-    var title = ViewData["Title"] as string ?? "OluRankings — UK Youth Rankings";
-}
-<!doctype html>
-<html lang="en" class="h-full">
+@using Microsoft.AspNetCore.Identity
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>@title</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - OluRankings</title>
 
-  <!-- Fonts + Icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/%40tabler/icons-webfont@2.47.0/tabler-icons.min.css" rel="stylesheet" />
-
-
-  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="min-h-full">
-  <!-- animated gradient/orb backdrop -->
-  <div class="bg-orb" aria-hidden="true"></div>
-  @if (User.IsInRole("Admin"))
-{
-    <a class="nav-link" asp-page="/Admin/Users/Index">Admin</a>
-}
+<body>
+    <!-- Sticky Header -->
+    <header class="site-header">
+        <div class="container navbar">
+            <div class="brand">OluRankings</div>
 
+            <nav class="nav-links">
+                <a asp-page="/Rankings/Index">Rankings</a>
+                <a asp-page="/Athletes/Index">Athletes</a>
+                <a asp-page="/News/Index">Top News</a>
+                <a asp-page="/Submit/Index">Submit</a>
+            </nav>
 
-  <!-- top nav -->
-  <header class="site-header glass-nav">
-    @await Html.PartialAsync("_Nav")
-  </header>
+            <div class="cta">
+                <a class="btn btn--ghost" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                <a class="btn" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            </div>
+        </div>
+    </header>
 
-  <main class="container page-wrap">
-    @RenderBody()
-  </main>
+    <!-- Page -->
+    <main class="container section">
+        @RenderBody()
+    </main>
 
-  <footer class="site-footer">
-    @await Html.PartialAsync("_Footer")
-  </footer>
+    <footer class="container footer">
+        <span>&copy; @DateTime.UtcNow.Year OluRankings. All rights reserved.</span>
+    </footer>
 
-  <!-- Quick theme toggle (matches main.js expectations) -->
-  <button id="themeToggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-    <i class="ti ti-moon-stars"></i>
-  </button>
-
-  <script src="~/js/main.js" asp-append-version="true"></script>
-  @RenderSection("Scripts", required: false)
+    <script src="~/js/main.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

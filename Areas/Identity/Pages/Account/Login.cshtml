@@ -4,52 +4,46 @@
     ViewData["Title"] = "Log in";
 }
 
-<section class="auth">
-  <div class="auth-card">
-    <div class="stack">
-      <span class="badge">Secure sign-in</span>
-      <h1>Welcome back</h1>
-      <p class="muted">Sign in to manage profiles, submit stats, follow rankings, and bookmark athletes.</p>
-    </div>
+<section class="form-wrap">
+  <div class="form-card">
+    <h1 class="form-title">Welcome back</h1>
+    <p class="form-sub">Sign in to manage profiles, submit stats, follow rankings, and bookmark athletes.</p>
 
-    <form id="account" method="post" class="stack" asp-route-returnUrl="@Model.ReturnUrl">
+    <form id="account" method="post" class="form">
       <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-      <div class="form-row">
-        <label class="label" asp-for="Input.Email">Email</label>
-        <input class="input" asp-for="Input.Email" autocomplete="username" placeholder="you@example.com" />
-        <span asp-validation-for="Input.Email" class="text-danger helper"></span>
+      <div class="field">
+        <label asp-for="Input.Email">Email</label>
+        <input asp-for="Input.Email" autocomplete="username" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
       </div>
 
-      <div class="form-row">
-        <label class="label" asp-for="Input.Password">Password</label>
-        <input id="Password" class="input" asp-for="Input.Password" autocomplete="current-password" placeholder="••••••••" />
-        <span asp-validation-for="Input.Password" class="text-danger helper"></span>
+      <div class="field">
+        <label asp-for="Input.Password">Password</label>
+        <input asp-for="Input.Password" autocomplete="current-password" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
       </div>
 
-      <div class="form-actions">
-        <label class="left">
-          <input class="checkbox" asp-for="Input.RememberMe" />
-          <span>@Html.DisplayNameFor(m => m.Input.RememberMe)</span>
+      <div class="form-aux">
+        <label>
+          <input class="form-check-input" asp-for="Input.RememberMe" />
+          @Html.DisplayNameFor(m => m.Input.RememberMe)
         </label>
         <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
       </div>
 
-      <!-- CAPTCHA (kept exactly as your project uses it) -->
-      <div class="turnstile-wrapper">
+      <div class="auth-captcha">
         <partial name="~/Pages/Shared/_Captcha.cshtml" />
       </div>
 
-      <button id="login-submit" type="submit" class="btn">Log in</button>
+      <button id="login-submit" type="submit" class="btn form-submit">Log in</button>
 
-      <div class="helper" style="margin-top:.6rem">
-        Don’t have an account? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Create one</a> ·
+      <div class="auth-links" style="display:flex;gap:12px;justify-content:space-between;margin-top:10px">
+        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Create account</a>
         <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend confirmation</a>
       </div>
     </form>
   </div>
 </section>
 
-@section Scripts {
-  <partial name="_ValidationScriptsPartial" />
-}
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
