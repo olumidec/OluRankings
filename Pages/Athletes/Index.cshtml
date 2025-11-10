@@ -1,25 +1,58 @@
 @page
+@model OluRankings.Pages.Athletes.AthletesIndexModel
 @{
     ViewData["Title"] = "Athletes";
+    string Initials(OluRankings.Models.Athlete a)
+        => string.Join("", new[]{a.GivenName?.Trim().FirstOrDefault(), a.FamilyName?.Trim().FirstOrDefault()}
+                        .Where(c => c.HasValue)).ToUpper();
+    string AgeBand(OluRankings.Models.Athlete a)
+        => a.ClassYear is int cy && cy>0 ? $"U{(DateTime.UtcNow.Year - cy + 18)}" : "U16";
 }
+
 <h1 class="page-title">Athletes</h1>
 
 <div class="searchbar">
-  <input type="search" placeholder="Search by name, school, region…" />
+  <input type="search" name="q" value="@Model.Query" placeholder="Search by name, school, region…" />
   <button class="btn">Search</button>
 </div>
 
 <div class="cards">
-  <article class="card">
-    <div class="avatar"></div>
-    <h3>Jay Lewis</h3>
-    <p class="muted">Guard • U16 • London</p>
-    <a class="link" href="#">View profile</a>
-  </article>
-  <article class="card">
-    <div class="avatar"></div>
-    <h3>Amara Chen</h3>
-    <p class="muted">Wing • U16 • Manchester</p>
-    <a class="link" href="#">View profile</a>
-  </article>
+  @if (Model.Athletes is not null && Model.Athletes.Any())
+  {
+    foreach (var a in Model.Athletes)
+    {
+      <a class="card" asp-page="Details" asp-route-id="@a.Id">
+        <div class="avatar" data-i="@Initials(a)">
+          @if (!string.IsNullOrWhiteSpace(a.HeadshotUrl))
+          { <img src="@a.HeadshotUrl" alt="@a.GivenName @a.FamilyName headshot" /> }
+          else { <span>@Initials(a)</span> }
+        </div>
+
+        <h3>@a.GivenName @a.FamilyName</h3>
+        <p class="muted">
+          @(string.IsNullOrWhiteSpace(a.Position) ? "—" : a.Position)
+          • @(a.ClassYear is int cy ? $"U{(DateTime.UtcNow.Year - cy + 18)}" : "U16")
+          • @(string.IsNullOrWhiteSpace(a.Region) ? "—" : a.Region)
+        </p>
+        <span class="link">View profile</span>
+      </a>
+    }
+  }
+  else
+  {
+    <!-- static placeholders (your current examples) -->
+    <article class="card">
+      <div class="avatar" data-i="JL"></div>
+      <h3>Jay Lewis</h3>
+      <p class="muted">Guard • U16 • London</p>
+      <a class="link" href="#">View profile</a>
+    </article>
+
+    <article class="card">
+      <div class="avatar" data-i="AC"></div>
+      <h3>Amara Chen</h3>
+      <p class="muted">Wing • U16 • Manchester</p>
+      <a class="link" href="#">View profile</a>
+    </article>
+  }
 </div>

@@ -1,19 +1,34 @@
 @page
 @model AthleteDetailsModel
 @{
-    ViewData["Title"] = $"{Model.Athlete?.GivenName} {Model.Athlete?.FamilyName}";
+    var a = Model.Athlete;
+    ViewData["Title"] = a is null ? "Athlete" : $"{a.GivenName} {a.FamilyName}";
 }
-@if (Model.Athlete is null) { <p>Not found.</p> }
+@if (a is null) { <p>Not found.</p> }
 else {
-  <article class="athlete">
-    <h1>@Model.Athlete.GivenName @Model.Athlete.FamilyName</h1>
-    <p>@Model.Athlete.School • @Model.Athlete.Region</p>
-    <div class="stats">
-      @foreach (var s in Model.Athlete.StatLines.OrderByDescending(s => s.Season))
+  <article class="athlete" style="display:grid;gap:12px">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="avatar" style="width:64px;height:64px">
+        @if (!string.IsNullOrWhiteSpace(a.HeadshotUrl))
+        { <img src="@a.HeadshotUrl" alt="Headshot of @a.GivenName @a.FamilyName" /> }
+        else { <span>@(a.GivenName[0])@(a.FamilyName[0])</span> }
+      </div>
+      <div>
+        <h1 style="margin:0">@a.GivenName @a.FamilyName</h1>
+        <p class="muted" style="margin:2px 0 0">
+          @(a.Position ?? "—") • @(a.ClassYear is int cy ? $"Class of {cy}" : "—")
+          • @(a.School ?? a.Club ?? "—") • @(a.Region ?? "—")
+        </p>
+      </div>
+    </div>
+
+    <div class="stats" style="border:1px solid var(--border,#23232a);border-radius:12px;padding:12px">
+      @foreach (var s in a.StatLines.OrderByDescending(s => s.Season))
       {
-        <div>
-          <strong>@s.Season</strong> — PPG @s.PointsPerGame, APG @s.AssistsPerGame, RPG @s.ReboundsPerGame
-          @if (s.IsVerified) { <span class="badge">Verified</span> }
+        <div style="padding:6px 0;border-top:1px solid var(--border,#23232a)">
+          <strong>@s.Season</strong>
+          — PPG @s.PointsPerGame, APG @s.AssistsPerGame, RPG @s.ReboundsPerGame
+          @if (s.IsVerified) { <span class="badge" style="margin-left:8px">Verified</span> }
         </div>
       }
     </div>
