@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using OluRankings.Data;
-using OluRankings.Models;
+using OluRankings.Data;          // ApplicationDbContext
+using OluRankings.Models;        // Athlete
 
 namespace OluRankings.Pages.Athletes
 {
     public class AthletesIndexModel : PageModel
     {
         private readonly ApplicationDbContext _db;
+
         public AthletesIndexModel(ApplicationDbContext db) => _db = db;
 
-        // used by the Razor view: ?query=term
         [BindProperty(SupportsGet = true)]
         public string? Query { get; set; }
 
@@ -22,10 +22,8 @@ namespace OluRankings.Pages.Athletes
 
         public async Task OnGetAsync()
         {
+            // Base query
             IQueryable<Athlete> q = _db.Athletes.AsNoTracking();
-
-            // show only public profiles if you want that behaviour live:
-            q = q.Where(a => a.IsPublic);
 
             if (!string.IsNullOrWhiteSpace(Query))
             {
@@ -38,7 +36,7 @@ namespace OluRankings.Pages.Athletes
 
             Athletes = await q
                 .OrderBy(a => a.FamilyName).ThenBy(a => a.GivenName)
-                .Take(60)
+                .Take(60)                    // keep the page snappy
                 .ToListAsync();
         }
     }
