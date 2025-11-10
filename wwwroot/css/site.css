@@ -76,6 +76,47 @@ body{
 .h-source{font-size:12px;color:var(--muted)}
 .h-play{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:10px;padding:6px 8px;font-weight:700}
 
+/* ===== Rankings page (uses real Athlete/RankingEntry fields) ===== */
+.rk-wrap{padding:24px 0}
+.rk-header{position:sticky;top:64px;background:var(--bg,#0b0b0f);z-index:5;padding:8px 0 12px;transition:box-shadow .2s}
+.rk-header.elev{box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.rk-header h1{font-size:36px;margin:0 0 8px}
+
+.rk-meta{display:flex;gap:10px;align-items:center;margin:6px 0 0}
+.rk-meta .badge{background:#f1ff80;color:#0a0a0a;border-radius:999px;padding:2px 10px;font-weight:700}
+.rk-meta .muted{color:var(--muted,#9aa3b2);font-size:.95rem}
+
+.rk-filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-top:10px}
+.rk-filter{display:grid;gap:6px}
+.rk-filter span{color:var(--muted,#9aa3b2);font-size:.85rem}
+.rk-filter select{min-width:140px;padding:10px;border-radius:12px;background:transparent;
+  color:var(--fg,#f7f7f7);border:1px solid var(--border,#23232a)}
+.rk-apply{padding:10px 14px;border-radius:12px;background:var(--brand,#7cf5a1);color:#0a0a0a;
+  border:0;font-weight:800;cursor:pointer}
+
+.rk-empty{padding:24px;border:1px dashed var(--border,#23232a);border-radius:16px;color:var(--muted,#9aa3b2)}
+.rk-tablewrap{border:1px solid var(--border,#23232a);border-radius:16px;overflow:auto}
+.rk-table{width:100%;border-collapse:separate;border-spacing:0}
+.rk-table thead th{position:sticky;top:calc(64px + 56px);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0));
+  backdrop-filter:saturate(120%) blur(6px); text-align:left;padding:14px;font-weight:800;font-size:.92rem}
+.rk-table tbody td{padding:14px;border-top:1px solid var(--border,#23232a);vertical-align:middle}
+.rk-table tr:hover td{background:rgba(255,255,255,.02)}
+.rk-table .col-rk{width:60px;text-align:right;font-weight:800}
+.rk-table .col-note{min-width:220px}
+
+.ath{display:flex;align-items:center;gap:12px}
+.ath-name{font-weight:800}
+.ath-sub{display:block;color:var(--muted,#9aa3b2);font-size:.85rem;margin-top:2px}
+
+@media (max-width:900px){ .hide-md{display:none} }
+@media (max-width:700px){
+  .hide-sm{display:none}
+  .rk-filter select{min-width:120px}
+  .rk-table thead th{top:calc(56px + 56px)}
+}
+
+
 /* --- MODAL --- */
 .modal{border:0;border-radius:14px;background:var(--panel);color:var(--fg);width:min(900px,96vw)}
 .modal::backdrop{background:rgba(0,0,0,.6)}

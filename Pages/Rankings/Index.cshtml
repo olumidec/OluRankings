@@ -2,67 +2,124 @@
 @model OluRankings.Pages.Rankings.RankingsIndexModel
 @{
     ViewData["Title"] = "Rankings";
+
+    string FullName(OluRankings.Models.Athlete? a)
+        => a is null ? "—" : $"{a.GivenName} {a.FamilyName}".Trim();
+
+    string HeightText(int? cm)
+        => cm.HasValue ? $"{cm} cm" : "—";
+
+    string TeamText(OluRankings.Models.Athlete? a)
+        => a is null
+            ? "—"
+            : (!string.IsNullOrWhiteSpace(a.School) ? a.School
+               : !string.IsNullOrWhiteSpace(a.Club) ? a.Club
+               : "—");
 }
 
-<h1>Rankings</h1>
+<section class="rk-wrap">
+  <header class="rk-header">
+    <h1>Rankings</h1>
 
-<form method="get" class="flex gap-3 mb-4">
-  <label>List
-    <select name="Publisher" onchange="this.form.submit()">
-      @foreach (var p in Model.Publishers)
-      {
-        <option value="@p" selected="@(Model.Publisher==p?"selected":null)">@p</option>
-      }
-    </select>
-  </label>
+    <form method="get" class="rk-filters" role="search" aria-label="Rankings filters">
+      <label class="rk-filter">
+        <span>List</span>
+        <select name="Publisher" asp-for="Publisher" asp-items="@(new SelectList(Model.Publishers))"></select>
+      </label>
 
-  <label>Sport
-    <select name="Sport" onchange="this.form.submit()">
-      <option value="basketball" selected="@(Model.Sport=="basketball"?"selected":null)">Basketball</option>
-    </select>
-  </label>
+      <label class="rk-filter">
+        <span>Sport</span>
+        <select name="Sport" asp-for="Sport">
+          <option value="basketball" selected>Basketball</option>
+        </select>
+      </label>
 
-  <label>Age Group
-    <select name="AgeGroup" onchange="this.form.submit()">
-      <option value="U14" selected="@(Model.AgeGroup=="U14"?"selected":null)">U14</option>
-      <option value="U16" selected="@(Model.AgeGroup=="U16"?"selected":null)">U16</option>
-      <option value="U18" selected="@(Model.AgeGroup=="U18"?"selected":null)">U18</option>
-    </select>
-  </label>
+      <label class="rk-filter">
+        <span>Age Group</span>
+        <select name="AgeGroup" asp-for="AgeGroup">
+          <option>U14</option>
+          <option selected>U16</option>
+          <option>U18</option>
+        </select>
+      </label>
 
-  <label>Period
-    <select name="Period" onchange="this.form.submit()">
-      <option value="">Latest</option>
-      @foreach (var per in Model.Periods)
-      {
-        <option value="@per" selected="@(Model.Period==per?"selected":null)">@per</option>
-      }
-    </select>
-  </label>
-</form>
+      <label class="rk-filter">
+        <span>Period</span>
+        <select name="Period" asp-for="Period" asp-items="@(new SelectList(Model.Periods))">
+          <option value="">Latest</option>
+        </select>
+      </label>
 
-@if (Model.Ranking is null)
-{
-  <p>No ranking found for the selected filters.</p>
-}
-else
-{
-  <h2>@Model.Ranking.Publisher — @Model.Ranking.AgeGroup (@Model.Ranking.Period)</h2>
-  <table class="table">
-    <thead>
-      <tr><th>RK</th><th>Athlete</th><th>School/Club</th><th>Pos</th><th>Score</th></tr>
-    </thead>
-    <tbody>
-    @foreach (var e in Model.Ranking.Entries.OrderBy(x => x.Rank))
+      <button class="rk-apply" type="submit">Apply</button>
+    </form>
+
+    @if (Model.Ranking is not null)
     {
-      <tr>
-        <td>@e.Rank</td>
-        <td>@($"{e.Athlete.FamilyName}, {e.Athlete.GivenName}")</td>
-        <td>@(string.IsNullOrWhiteSpace(e.Athlete.School) ? e.Athlete.Club : e.Athlete.School)</td>
-        <td>@e.Athlete.Position</td>
-        <td>@e.Score</td>
-      </tr>
+      <p class="rk-meta">
+        <span class="badge">@(Model.Ranking.Period ?? "Latest")</span>
+        <span class="muted">
+          Published @Model.Ranking.PublishedAt.ToLocalTime().ToString("MMM d, yyyy")
+        </span>
+      </p>
     }
-    </tbody>
-  </table>
+  </header>
+
+  @if (Model.Ranking is null || Model.Ranking.Entries is null || !Model.Ranking.Entries.Any())
+  {
+    <div class="rk-empty">
+      <p>No ranking found for the selected filters.</p>
+    </div>
+  }
+  else
+  {
+    <div class="rk-tablewrap">
+      <table class="rk-table">
+        <thead>
+          <tr>
+            <th class="col-rk">RK</th>
+            <th>Athlete</th>
+            <th class="hide-sm">Pos</th>
+            <th class="hide-sm">School / Club</th>
+            <th class="hide-md">Region</th>
+            <th class="hide-md">Height</th>
+            <th class="col-note">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+        @foreach (var e in Model.Ranking.Entries.OrderBy(x => x.Rank))
+        {
+            var a = e.Athlete;
+            <tr>
+              <td class="col-rk">@e.Rank</td>
+              <td>
+                <div class="ath">
+                  <div class="ath-main">
+                    <span class="ath-name">@FullName(a)</span>
+                    <span class="ath-sub">
+                      @((a?.ClassYear is int cy && cy > 0) ? $"Class of {cy}" : (a?.Sport ?? ""))
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td class="hide-sm">@(@a?.Position ?? "—")</td>
+              <td class="hide-sm">@TeamText(a)</td>
+              <td class="hide-md">@(@a?.Region ?? "—")</td>
+              <td class="hide-md">@HeightText(a?.HeightCm)</td>
+              <td class="col-note">@(!string.IsNullOrWhiteSpace(e.Notes) ? e.Notes : "—")</td>
+            </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@section Scripts{
+  <script>
+    document.addEventListener('scroll', () => {
+      const h = document.querySelector('.rk-header');
+      if(!h) return;
+      h.classList.toggle('elev', window.scrollY > 8);
+    });
+  </script>
 }
