@@ -2,57 +2,77 @@
 @model OluRankings.Pages.Athletes.AthletesIndexModel
 @{
     ViewData["Title"] = "Athletes";
-    string Initials(OluRankings.Models.Athlete a)
-        => string.Join("", new[]{a.GivenName?.Trim().FirstOrDefault(), a.FamilyName?.Trim().FirstOrDefault()}
-                        .Where(c => c.HasValue)).ToUpper();
-    string AgeBand(OluRankings.Models.Athlete a)
-        => a.ClassYear is int cy && cy>0 ? $"U{(DateTime.UtcNow.Year - cy + 18)}" : "U16";
 }
 
 <h1 class="page-title">Athletes</h1>
 
-<div class="searchbar">
-  <input type="search" name="q" value="@Model.Query" placeholder="Search by name, school, region…" />
-  <button class="btn">Search</button>
-</div>
+<form method="get" class="searchbar">
+  <input type="search" name="query" value="@Model.Query" placeholder="Search by name, school, region…" />
+  <button class="btn" type="submit">Search</button>
+</form>
 
-<div class="cards">
-  @if (Model.Athletes is not null && Model.Athletes.Any())
-  {
-    foreach (var a in Model.Athletes)
+@if (!Model.Athletes.Any())
+{
+  <p class="muted">No athletes found. Try a different search.</p>
+}
+else
+{
+  <div class="cards">
+    @foreach (var a in Model.Athletes)
     {
-      <a class="card" asp-page="Details" asp-route-id="@a.Id">
-        <div class="avatar" data-i="@Initials(a)">
-          @if (!string.IsNullOrWhiteSpace(a.HeadshotUrl))
-          { <img src="@a.HeadshotUrl" alt="@a.GivenName @a.FamilyName headshot" /> }
-          else { <span>@Initials(a)</span> }
-        </div>
-
+      <article class="card glow-card">
+        <div class="avatar" style="background-image:url('@(a.HeadshotUrl ?? "/img/avatar-placeholder.svg")')"></div>
         <h3>@a.GivenName @a.FamilyName</h3>
         <p class="muted">
-          @(string.IsNullOrWhiteSpace(a.Position) ? "—" : a.Position)
-          • @(a.ClassYear is int cy ? $"U{(DateTime.UtcNow.Year - cy + 18)}" : "U16")
-          • @(string.IsNullOrWhiteSpace(a.Region) ? "—" : a.Region)
+          @(a.Position ?? "—") • @(a.ClassYear is int cy ? $"U{cy}" : "U?") • @(a.Region ?? "—")
         </p>
-        <span class="link">View profile</span>
-      </a>
+        <a class="link" asp-page="/Athletes/Details" asp-route-slug="@a.Slug">View profile</a>
+      </article>
     }
-  }
-  else
-  {
-    <!-- static placeholders (your current examples) -->
-    <article class="card">
-      <div class="avatar" data-i="JL"></div>
-      <h3>Jay Lewis</h3>
-      <p class="muted">Guard • U16 • London</p>
-      <a class="link" href="#">View profile</a>
-    </article>
+  </div>
+}
 
-    <article class="card">
-      <div class="avatar" data-i="AC"></div>
-      <h3>Amara Chen</h3>
-      <p class="muted">Wing • U16 • Manchester</p>
-      <a class="link" href="#">View profile</a>
-    </article>
-  }
-</div>
+@section Styles {
+<style>
+/* subtle animated “laser/glow” border on hover */
+.glow-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.glow-card::before {
+  content:"";
+  position:absolute;
+  inset:-200%;
+  margin:auto;
+  width:80px; height:360px;
+  background:linear-gradient(#ff2288,#387ef0);
+  opacity:0;
+  filter:blur(16px);
+  transform:rotate(0deg);
+  transition:opacity .25s ease;
+  animation:spin-glow 8s linear infinite;
+  animation-play-state:paused;
+  z-index:0;
+}
+.glow-card:hover::before {
+  opacity:.6;
+  animation-play-state:running;
+}
+/* content stays above the glow */
+.glow-card > * { position: relative; z-index: 1; }
+
+/* avatar block (uses background-image inline style) */
+.avatar {
+  width:64px; height:64px; border-radius:12px;
+  background:#101215 center/cover no-repeat;
+  border:1px solid var(--border,#23232a);
+  margin-bottom:8px;
+}
+
+@keyframes spin-glow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+</style>
+}

@@ -14,38 +14,31 @@ namespace OluRankings.Pages.Athletes
         private readonly ApplicationDbContext _db;
         public AthletesIndexModel(ApplicationDbContext db) => _db = db;
 
-        // query string: ?q=&page=&pagesize=
-        [BindProperty(SupportsGet = true)] public string? q { get; set; }
-        [BindProperty(SupportsGet = true)] public int page { get; set; } = 1;
-        [BindProperty(SupportsGet = true)] public int pagesize { get; set; } = 24;
+        // used by the Razor view: ?query=term
+        [BindProperty(SupportsGet = true)]
+        public string? Query { get; set; }
 
-        public int Total { get; private set; }
         public List<Athlete> Athletes { get; private set; } = new();
 
         public async Task OnGetAsync()
         {
-            if (page < 1) page = 1;
-            if (pagesize is < 6 or > 60) pagesize = 24;
+            IQueryable<Athlete> q = _db.Athletes.AsNoTracking();
 
-            IQueryable<Athlete> query = _db.Athletes
-                .AsNoTracking()
-                .Where(a => a.Status == "active" && a.IsPublic);
+            // show only public profiles if you want that behaviour live:
+            q = q.Where(a => a.IsPublic);
 
-            if (!string.IsNullOrWhiteSpace(q))
+            if (!string.IsNullOrWhiteSpace(Query))
             {
-                var term = q.Trim().ToLower();
-                query = query.Where(a =>
+                var term = Query.Trim().ToLower();
+                q = q.Where(a =>
                     (a.GivenName + " " + a.FamilyName).ToLower().Contains(term) ||
                     (a.School ?? "").ToLower().Contains(term) ||
                     (a.Region ?? "").ToLower().Contains(term));
             }
 
-            Total = await query.CountAsync();
-
-            Athletes = await query
+            Athletes = await q
                 .OrderBy(a => a.FamilyName).ThenBy(a => a.GivenName)
-                .Skip((page - 1) * pagesize)
-                .Take(pagesize)
+                .Take(60)
                 .ToListAsync();
         }
     }
