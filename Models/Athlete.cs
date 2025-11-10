@@ -26,6 +26,11 @@ public class Athlete
     public string? HeadshotUrl { get; set; }
     public string Status { get; set; } = "active";
 
+    // Models/Athlete.cs (additions)
+    public bool IsPublic { get; set; } = false;   // controls site visibility
+    public bool IsVerified => VerifiedAt != null; // convenience computed
+
+
     // Verification + audit
     public DateTime? VerifiedAt { get; set; }
     [MaxLength(450)] public string? VerifiedByUserId { get; set; }

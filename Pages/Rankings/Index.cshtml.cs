@@ -19,7 +19,7 @@ namespace OluRankings.Pages.Rankings
 
         // sorting & paging for entries
         [BindProperty(SupportsGet = true)] public string Sort { get; set; } = "rank"; // rank|name|team|region|score
-        [BindProperty(SupportsGet = true)] public int Page { get; set; } = 1;
+        [BindProperty(SupportsGet = true)] public int PageNumber { get; set; } = 1;   // <-- renamed
         [BindProperty(SupportsGet = true)] public int PageSize { get; set; } = 25;
 
         public List<string> Publishers { get; set; } = new();
@@ -31,7 +31,7 @@ namespace OluRankings.Pages.Rankings
 
         public async Task<IActionResult> OnGetAsync()
         {
-            if (Page < 1) Page = 1;
+            if (PageNumber < 1) PageNumber = 1;              // <-- updated
             if (PageSize is < 10 or > 100) PageSize = 25;
 
             // dropdowns
@@ -79,7 +79,7 @@ namespace OluRankings.Pages.Rankings
 
             TotalRows = await eq.CountAsync();
             Rows = await eq
-                .Skip((Page - 1) * PageSize)
+                .Skip((PageNumber - 1) * PageSize)           // <-- updated
                 .Take(PageSize)
                 .ToListAsync();
 
