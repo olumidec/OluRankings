@@ -105,6 +105,35 @@ body{
 .rk-table .col-rk{width:60px;text-align:right;font-weight:800}
 .rk-table .col-note{min-width:220px}
 
+.rk-tablewrap {
+  margin-top: 1rem;
+  border: 1px solid var(--border,#23232a);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.rk-table { width: 100%; border-collapse: collapse; }
+.rk-table th, .rk-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border,#23232a);
+}
+.rk-table thead th {
+  background: var(--card,#141418);
+  text-align: left;
+  font-weight: 700;
+}
+.rk-table tbody tr:hover { background: rgba(255,255,255,.035); }
+
+.rk-table .col-rank  { width: 72px; text-align: right; }
+.rk-table .col-score { width: 100px; text-align: right; }
+.rk-table .col-note  { color: var(--muted,#9aa3b2); }
+
+.rk-table .ath { display:flex; align-items:center; gap:12px; min-width: 220px; }
+.rk-table .ath .ath-main { display:block; }
+.rk-table .ath-name { font-weight:700; }
+.rk-table .ath-sub  { color: var(--muted,#9aa3b2); font-size:.92rem; }
+
+
 .ath{display:flex;align-items:center;gap:12px}
 .ath-name{font-weight:800}
 .ath-sub{display:block;color:var(--muted,#9aa3b2);font-size:.85rem;margin-top:2px}
