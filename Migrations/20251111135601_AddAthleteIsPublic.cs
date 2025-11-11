@@ -10,20 +10,42 @@ namespace OluRankings.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsPublic",
-                table: "Athletes",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: false);
+            if (migrationBuilder.ActiveProvider == "Npgsql.EntityFrameworkCore.PostgreSQL")
+            {
+                // Postgres: add only if missing (safe re-run on Render)
+                migrationBuilder.Sql("""
+            ALTER TABLE "Athletes"
+            ADD COLUMN IF NOT EXISTS "IsPublic" boolean NOT NULL DEFAULT false;
+        """);
+            }
+            else
+            {
+                // SQLite (dev): normal add
+                migrationBuilder.AddColumn<bool>(
+                    name: "IsPublic",
+                    table: "Athletes",
+                    type: "INTEGER",
+                    nullable: false,
+                    defaultValue: false);
+            }
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "IsPublic",
-                table: "Athletes");
+            if (migrationBuilder.ActiveProvider == "Npgsql.EntityFrameworkCore.PostgreSQL")
+            {
+                migrationBuilder.Sql("""
+            ALTER TABLE "Athletes"
+            DROP COLUMN IF EXISTS "IsPublic";
+        """);
+            }
+            else
+            {
+                migrationBuilder.DropColumn(
+                    name: "IsPublic",
+                    table: "Athletes");
+            }
         }
     }
 }
+
