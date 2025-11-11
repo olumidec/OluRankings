@@ -13,7 +13,9 @@
 
 <table class="table">
   <thead>
-    <tr><th>Name</th><th>School</th><th>Club</th><th>Pos</th><th>Class</th><th>Status</th><th></th></tr>
+    <tr>
+      <th>Name</th><th>School</th><th>Club</th><th>Pos</th><th>Class</th><th>Status</th><th>Public</th><th></th>
+    </tr>
   </thead>
   <tbody>
   @foreach (var a in Model.Items)
@@ -25,8 +27,26 @@
       <td>@a.Position</td>
       <td>@a.ClassYear</td>
       <td>@a.Status</td>
+
       <td>
+        <form method="post" asp-page-handler="TogglePublic" style="display:inline">
+          <input type="hidden" name="id" value="@a.Id" />
+          <input type="hidden" name="value" value="@(!a.IsPublic)" />
+          <input type="hidden" name="q" value="@Request.Query["q"]" />
+          <button class="btn btn-secondary" type="submit">
+            @(a.IsPublic ? "Public" : "Private")
+          </button>
+        </form>
+      </td>
+
+      <td style="text-align:right; white-space:nowrap">
+        <a class="btn btn-sm btn-primary" asp-page="/Athletes/Details" asp-route-id="@a.Id">View</a>
         <a class="btn btn-sm btn-primary" asp-page="/Admin/Athletes/Edit" asp-route-id="@a.Id">Edit</a>
+        <form method="post" asp-page-handler="SoftDelete" style="display:inline" onsubmit="return confirm('Hide this profile from public?');">
+          <input type="hidden" name="id" value="@a.Id" />
+          <input type="hidden" name="q" value="@Request.Query["q"]" />
+          <button class="btn btn-sm btn-secondary" type="submit">Remove</button>
+        </form>
       </td>
     </tr>
   }

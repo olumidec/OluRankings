@@ -27,8 +27,12 @@ var showErrors = builder.Configuration.GetValue<bool>("SHOW_ERRORS");
 
 // --------------------------- Services ---------------------------------
 
-// Razor Pages
-builder.Services.AddRazorPages();
+// Razor Pages + secure Admin folder
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/Admin", "RequireAdmin");
+});
+
 
 // HTTP client (Turnstile + SendGrid client wrappers)
 builder.Services.AddHttpClient();
