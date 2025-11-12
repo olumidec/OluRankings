@@ -18,15 +18,17 @@
 .brand { display:flex; align-items:center; gap:10px; font-weight:800; text-decoration:none; color:var(--fg); }
 .brand-logo { height:26px; width:auto; border-radius:6px; display:block; }
 
-html[data-theme="light"]{
-  --bg: #f6f8fb;
-  --panel: #ffffff;
-  --card: #ffffff;
-  --elev: #f3f6fb;
-  --border: #e7eef7;
-  --fg: #0f1521;
-  --muted: #506079;
-  --shadow: 0 12px 28px rgba(16,22,33,.08);
+html[data-theme="dark"]{
+  --bg: #0e0f12;
+  --panel: #15171c;
+  --card: #141418;
+  --elev: #10131a;
+  --border: #2a2f39;
+  --fg: #e9edf1;          /* <- used across your site */
+  --muted: #a1a8b3;       /* <- used across your site */
+  --brand: #ff4d6d;       /* keep your accents */
+  --brand-2: #6de1ff;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
