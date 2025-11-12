@@ -1,2 +1,58 @@
 @page
 @model OluRankings.Pages.Admin.Submissions.IndexModel
+@{
+    ViewData["Title"] = "Submissions";
+
+    string AgeBand(int? classYear)
+        => classYear.HasValue ? $"U{(DateTime.UtcNow.Year - classYear.Value + 18)}" : "U16";
+}
+
+<h1 class="mb-3">Pending Submissions</h1>
+
+@if (Model.Pending == null || Model.Pending.Count == 0)
+{
+    <div class="rk-empty">No pending submissions.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Sport/Age</th>
+                <th>School / Club</th>
+                <th>Submitted</th>
+                <th>Status</th>
+                <th style="width:260px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var s in Model.Pending)
+        {
+            <tr>
+                <td>@s.GivenName @s.FamilyName</td>
+                <td>@AgeBand(s.ClassYear)</td>
+                <td>
+                    @(string.IsNullOrWhiteSpace(s.School) ? "—" : s.School)
+                    @if (!string.IsNullOrWhiteSpace(s.Club))
+                    {
+                        @: / @s.Club
+                    }
+                </td>
+                <td>@s.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>@s.Status</td>
+                <td>
+                    <form method="post" asp-page-handler="Approve" class="d-inline">
+                        <input type="hidden" name="id" value="@s.Id" />
+                        <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                    </form>
+                    <form method="post" asp-page-handler="Reject" class="d-inline ms-2">
+                        <input type="hidden" name="id" value="@s.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

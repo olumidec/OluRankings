@@ -5,14 +5,16 @@
 }
 <h1>Create Ranking</h1>
 
-<form method="post" class="grid gap-3 md:grid-cols-2">
-  <label>List (Publisher) <input asp-for="NewRanking.Publisher" /></label>
-  <label>Sport <input asp-for="NewRanking.Sport" /></label>
-  <label>Age Group <input asp-for="NewRanking.AgeGroup" /></label>
-  <label>Position (optional) <input asp-for="NewRanking.Position" /></label>
-  <label>Region (optional) <input asp-for="NewRanking.Region" /></label>
-  <label>Period <input asp-for="NewRanking.Period" /></label>
-  <div class="md:col-span-2 mt-3">
+<form method="post" class="grid gap-3">
+  <label>Publisher <input asp-for="NewRanking.Publisher" /></label>
+  <div class="flex gap-2">
+    <label>Sport <input asp-for="NewRanking.Sport" /></label>
+    <label>Age Group <input asp-for="NewRanking.AgeGroup" /></label>
+    <label>Period <input asp-for="NewRanking.Period" placeholder="e.g. 2025-11" /></label>
+    <label>Region <input asp-for="NewRanking.Region" /></label>
+  </div>
+  <label>Published At (optional) <input asp-for="NewRanking.PublishedAt" type="datetime-local" /></label>
+  <div class="mt-2">
     <button class="btn btn-primary" type="submit">Create</button>
     <a class="btn" asp-page="Index">Back</a>
   </div>

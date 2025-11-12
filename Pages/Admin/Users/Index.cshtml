@@ -1,53 +1,61 @@
 @page
 @model OluRankings.Pages.Admin.Users.IndexModel
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = "Users & Roles";
 }
+<h1 class="mb-3">Users & Roles</h1>
 
-<h1 class="mb-4">Users</h1>
+@if (TempData["Err"] is string err) { <div class="alert error">@err</div> }
+@if (TempData["Msg"] is string msg) { <div class="alert success">@msg</div> }
 
-<table class="table table-dark table-striped align-middle">
-    <thead>
+<form method="get" class="mb-3">
+  <input type="text" name="Q" value="@Model.Q" placeholder="Search email / username / name" />
+  <button class="btn btn-secondary" type="submit">Search</button>
+</form>
+
+<table class="table">
+  <thead>
     <tr>
-        <th>Email</th>
-        <th>Email Confirmed</th>
-        <th>Lockout</th>
-        <th>Roles</th>
-        <th style="width: 420px;">Actions</th>
+      <th>Email</th><th>Name</th><th>Confirmed</th><th>Status</th><th>Roles</th><th style="width:420px">Actions</th>
     </tr>
-    </thead>
-    <tbody>
-    @foreach (var u in Model.Users)
-    {
-        <tr>
-            <td>@u.Email</td>
-            <td>@u.EmailConfirmed</td>
-            <td>@(u.LockoutEnd is not null ? $"Locked (until {u.LockoutEnd})" : "Active")</td>
-            <td>@string.Join(", ", u.Roles)</td>
-            <td>
-                <form method="post" asp-page-handler="ConfirmEmail" class="d-inline">
-                    <input type="hidden" name="UserId" value="@u.Id" />
-                    <button class="btn btn-sm btn-outline-success">Confirm email</button>
-                </form>
+  </thead>
+  <tbody>
+  @foreach (var u in Model.Users)
+  {
+    <tr>
+      <td>@u.Email</td>
+      <td>@u.DisplayName</td>
+      <td>@u.EmailConfirmed</td>
+      <td>@(u.Locked ? "Locked" : "Active")</td>
+      <td>@(u.Roles.Length == 0 ? "—" : string.Join(", ", u.Roles))</td>
+      <td>
+        <form method="post" asp-page-handler="ConfirmEmail" class="inline-form">
+          <input type="hidden" name="UserId" value="@u.Id" />
+          <button class="btn btn-sm btn-secondary">Confirm email</button>
+        </form>
 
-                <form method="post" asp-page-handler="ToggleLock" class="d-inline ms-2">
-                    <input type="hidden" name="UserId" value="@u.Id" />
-                    <button class="btn btn-sm btn-outline-warning">Toggle lock</button>
-                </form>
+        <form method="post" asp-page-handler="ToggleLock" class="inline-form">
+          <input type="hidden" name="UserId" value="@u.Id" />
+          <button class="btn btn-sm btn-warning">Toggle lock</button>
+        </form>
 
-                <form method="post" asp-page-handler="AddRole" class="d-inline ms-2">
-                    <input type="hidden" name="UserId" value="@u.Id" />
-                    <input name="RoleName" class="form-control form-control-sm d-inline" style="width:130px" placeholder="Role (e.g. Admin)" />
-                    <button class="btn btn-sm btn-outline-primary ms-1">Add role</button>
-                </form>
+        <form method="post" asp-page-handler="AddRole" class="inline-form">
+          <input type="hidden" name="UserId" value="@u.Id" />
+          <select name="RoleName">
+            <option value="Admin">Admin</option>
+            <option value="Ranker">Ranker</option>
+            <option value="Coach">Coach</option>
+          </select>
+          <button class="btn btn-sm btn-primary">Add role</button>
+        </form>
 
-                <form method="post" asp-page-handler="RemoveRole" class="d-inline ms-2">
-                    <input type="hidden" name="UserId" value="@u.Id" />
-                    <input name="RoleName" class="form-control form-control-sm d-inline" style="width:130px" placeholder="Role to remove" />
-                    <button class="btn btn-sm btn-outline-danger ms-1">Remove role</button>
-                </form>
-            </td>
-        </tr>
-    }
-    </tbody>
+        <form method="post" asp-page-handler="RemoveRole" class="inline-form">
+          <input type="hidden" name="UserId" value="@u.Id" />
+          <input name="RoleName" placeholder="Role to remove" />
+          <button class="btn btn-sm btn-danger">Remove role</button>
+        </form>
+      </td>
+    </tr>
+  }
+  </tbody>
 </table>

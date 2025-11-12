@@ -1,2 +1,60 @@
 @page "{id:guid}"
 @model OluRankings.Pages.Admin.Rankings.EditModel
+@{
+    ViewData["Title"] = "Edit Ranking";
+}
+<h1>Edit Ranking</h1>
+
+@if (TempData["Msg"] is string m) { <div class="alert success">@m</div> }
+
+@if (Model.List is null) { <p>Not found.</p> }
+else {
+  <h3>@Model.List.Publisher — @Model.List.Sport @Model.List.AgeGroup (@Model.List.Period)</h3>
+
+  <form method="get" class="mb-2">
+    <input type="hidden" name="id" value="@Model.List.Id" />
+    <input type="text" name="Q" value="@Model.Q" placeholder="Search athletes…" />
+    <button class="btn btn-secondary" type="submit">Search</button>
+  </form>
+
+  @if (Model.AllAthletes.Any())
+  {
+    <div class="mb-3">
+      @foreach (var a in Model.AllAthletes)
+      {
+        <form method="post" asp-page-handler="Add" class="inline-form">
+          <input type="hidden" name="id" value="@Model.List.Id" />
+          <input type="hidden" name="athleteId" value="@a.Id" />
+          <button class="chip">@a.FamilyName, @a.GivenName — @a.School / @a.Region (+)</button>
+        </form>
+      }
+    </div>
+  }
+
+  <form method="post" asp-page-handler="SaveOrder">
+    <input type="hidden" name="id" value="@Model.List.Id" />
+    <p class="muted">Save a new order by listing Athlete IDs (one per row) or using a small script to fill the hidden inputs. For now we keep it simple: existing order is preserved unless changed programmatically.</p>
+
+    @* Hidden fields filled by a tiny script — if you add drag/drop later *@
+    @for (var i = 0; i < Model.Entries.Count; i++)
+    {
+      <input type="hidden" name="OrderedAthleteIds[@i]" value="@Model.Entries[i].AthleteId" />
+    }
+
+    <table class="table">
+      <thead><tr><th>Rank</th><th>Athlete</th><th>Team/Region</th></tr></thead>
+      <tbody>
+      @foreach (var e in Model.Entries)
+      {
+        <tr>
+          <td>@e.Rank</td>
+          <td>@e.Athlete.FamilyName, @e.Athlete.GivenName</td>
+          <td>@e.Athlete.School / @e.Athlete.Region</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+
+    <button class="btn btn-primary">Save Order</button>
+  </form>
+}
