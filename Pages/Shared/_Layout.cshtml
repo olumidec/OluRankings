@@ -12,16 +12,20 @@
     <title>@title - OluRankings</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="icon" type="image/png" href="~/images/olurankings-logo.png" />
+    <link rel="apple-touch-icon" href="~/images/olurankings-logo.png" />
+    <meta name="theme-color" content="#0b0d11">
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <header class="nav-wrap">
         <div class="nav-inner">
             <a class="brand" asp-page="/Index" aria-label="OluRankings Home">
-                <span class="brand-dot"></span>
-                OluRankings
+                <img src="~/images/olurankings-logo.png" alt="OluRankings" class="brand-logo" />
+                <span>OluRankings</span>
             </a>
+
 
             <nav class="nav-links" aria-label="Primary">
                 <a asp-page="/Rankings/Index">Rankings</a>
