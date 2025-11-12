@@ -1,24 +1,38 @@
 (() => {
-  // ---- THEME (preserve existing setting)
+  // ===== THEME =====
+  // Support BOTH old data-attr approach and new .theme-dark class.
   const root = document.documentElement;
-  const toggle = document.getElementById('themeToggle');
-  const saved = localStorage.getItem('theme');
-  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
-  toggle && toggle.addEventListener('click', () => {
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-  });
+  const btn = document.getElementById('themeToggle') || document.getElementById('theme-toggle');
 
-  // ---- MOBILE NAV (simple reveal)
+  // Default LIGHT; only set dark if user saved it.
+  const saved = localStorage.getItem('theme'); // 'light' | 'dark' | null
+  if (saved === 'dark') {
+    root.classList.add('theme-dark');
+    root.setAttribute('data-theme','dark');   // keep compatibility
+  } else {
+    root.classList.remove('theme-dark');
+    root.setAttribute('data-theme','light');
+  }
+
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const isDark = root.classList.toggle('theme-dark');
+      root.setAttribute('data-theme', isDark ? 'dark' : 'light'); // keep in sync
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  }
+
+  // ===== MOBILE NAV (unchanged) =====
   const ham = document.getElementById('hamburger');
   const nav = document.querySelector('.nav-links');
-  ham && ham.addEventListener('click', () => {
-    const shown = getComputedStyle(nav).display !== 'none';
-    nav.style.display = shown ? 'none' : 'flex';
-  });
+  if (ham && nav) {
+    ham.addEventListener('click', () => {
+      const shown = getComputedStyle(nav).display !== 'none';
+      nav.style.display = shown ? 'none' : 'flex';
+    });
+  }
 
-  // ---- HIGHLIGHTS (keeps your JSON flow)
+  // ===== HIGHLIGHTS (unchanged; keeps your JSON flow) =====
   const grid = document.getElementById('highlightsGrid');
   if (grid) {
     fetch('/data/highlights.json', { cache: 'no-cache' })
@@ -82,5 +96,10 @@
   }
   function escapeHtml(s=''){
     return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // Reduced-motion nicety for shimmer effects
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll(".shimmer").forEach(el => el.classList.remove("shimmer"));
   }
 })();

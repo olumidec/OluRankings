@@ -3,9 +3,10 @@
 @inject UserManager<OluRankings.Models.ApplicationUser> UserManager
 @{
     var title = ViewData["Title"] as string ?? "OluRankings";
+    var year = DateTime.UtcNow.Year;
 }
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" class=""> @* default: LIGHT (no theme-dark class) *@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,82 +17,52 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <header class="nav-wrap">
-        <div class="nav-inner">
+    <header class="nav">
+        <div class="container nav__inner">
             <a class="brand" asp-page="/Index" aria-label="OluRankings Home">
-                <span class="brand-dot"></span>
                 OluRankings
             </a>
 
-            <nav class="nav-links" aria-label="Primary">
+            <nav class="nav__links" aria-label="Primary">
                 <a asp-page="/Rankings/Index">Rankings</a>
                 <a asp-page="/Athletes/Index">Athletes</a>
                 <a asp-page="/News/Index">Top News</a>
                 <a asp-page="/Submit/Index">Submit</a>
-                @if (User.IsInRole("Admin"))
-                {
-                    <a asp-page="/Admin/Index">Admin</a>
-                }
+                @if (User.IsInRole("Admin")) { <a asp-page="/Admin/Index">Admin</a> }
             </nav>
 
-            <div class="nav-cta">
-                <button id="themeToggle" class="icon-btn" aria-label="Toggle theme">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21.64 13a1 1 0 0 0-1.05-1.27A8 8 0 0 1 12.24 3a1 1 0 0 0-1.26-1A10 10 0 1 0 22 14.76a1 1 0 0 0-.36-1.76z"/></svg>
-                </button>
-
+            <div class="nav__actions">
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <a class="btn ghost" asp-page="/Account/Manage/Index" asp-area="Identity">Account</a>
+                    <a class="btn btn--ghost" asp-page="/Account/Manage/Index" asp-area="Identity">Account</a>
                     <form class="inline-form" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index")" method="post">
-                        <button class="btn solid" type="submit">Logout</button>
+                        <button class="btn btn--primary" type="submit">Logout</button>
                     </form>
                 }
                 else
                 {
-                    <a class="btn ghost" asp-area="Identity" asp-page="/Account/Login">Login</a>
-                    <a class="btn solid" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    <a class="btn btn--ghost" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                    <a class="btn btn--primary" asp-area="Identity" asp-page="/Account/Register">Register</a>
                 }
+                <button id="theme-toggle" class="btn btn--ghost" title="Toggle theme">◐</button>
             </div>
-
-            <button class="hamburger" id="hamburger" aria-label="Open menu">
-                <span></span><span></span><span></span>
-            </button>
         </div>
     </header>
 
-    <main class="page">
+    <main class="container page">
         @RenderBody()
     </main>
 
-    <footer class="site-footer">
-        <div class="footer-inner">
-            <div class="f-brand">
-                <span class="brand-dot"></span> OluRankings
-                <div class="muted">UK Youth Rankings. Verified profiles. Stats that matter.</div>
-            </div>
-            <div class="f-cols">
-                <div>
-                    <div class="f-title">Explore</div>
-                    <a asp-page="/Rankings/Index">Rankings</a>
-                    <a asp-page="/Athletes/Index">Athletes</a>
-                    <a asp-page="/News/Index">Top News</a>
-                </div>
-                <div>
-                    <div class="f-title">Contribute</div>
-                    <a asp-page="/Submit/Index">Submit Profile</a>
-                    <a asp-page="/Teams/Manage">Teams</a>
-                </div>
-                <div>
-                    <div class="f-title">Legal</div>
-                    <a href="#">Terms</a>
-                    <a href="#">Privacy</a>
-                </div>
-            </div>
+    <footer class="container footer">
+        <div>© @year OluRankings. All rights reserved.</div>
+        <div class="footer__links">
+            <a asp-page="/Index">Home</a>
+            <a asp-page="/Rankings/Index">Rankings</a>
+            <a asp-page="/Submit/Index">Submit</a>
         </div>
-        <div class="footer-bar">© @DateTime.UtcNow.Year OluRankings. All rights reserved.</div>
     </footer>
 
-    <script src="~/js/main.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
