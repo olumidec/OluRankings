@@ -7,12 +7,6 @@
   --ease:cubic-bezier(.22,.61,.36,1);
 }
 
-/* Optional: honor user’s OS dark preference ONLY on first visit,
-   but our JS will still control final state via .theme-dark */
-@media (prefers-color-scheme: dark){
-  :root:not(.theme-dark){ /* no-op; JS decides */ }
-}
-
 /* ---- Dark Mode Overrides (toggled by JS) ---- */
 .theme-dark{
   --bg:#0e0f12; --panel:#15171c; --panel-glass:rgba(255,255,255,.06);
