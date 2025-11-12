@@ -1,59 +1,37 @@
 /* ---- Theme Variables (LIGHT default) ---- */
 :root{
-  /* unified tokens (new) */
-  --bg:#fcfcfd;
-  --panel:#ffffff;
-  --panel-glass:rgba(0,0,0,.04);
-  --card:#ffffff;
-  --elev:#f3f6fb;
-  --stroke:#e8e9ee;         /* aka border */
-  --border:#e7eef7;          /* keep your existing name */
-  --text:#0b1020;
-  --fg:#0f1521;              /* keep your existing name */
-  --muted:#506079;
-  --accent:#ff2a2a;
-  --brand:#ff4d6d;           /* you reference --brand / --brand-2 elsewhere */
-  --brand-2:#6de1ff;
-  --radius:16px;
+  --bg:#fcfcfd; --panel:#ffffff; --panel-glass:rgba(0,0,0,.04);
+  --text:#0b1020; --muted:#4a5565; --stroke:#e8e9ee;
+  --accent:#ff2a2a; --radius:16px;
   --shadow:0 12px 28px rgba(16,22,33,.08);
   --ease:cubic-bezier(.22,.61,.36,1);
 }
 
-/* Optional: honor OS dark preference on first visit (JS ultimately wins) */
+/* Optional: honor user’s OS dark preference ONLY on first visit,
+   but our JS will still control final state via .theme-dark */
 @media (prefers-color-scheme: dark){
-  :root:not(.theme-dark){ /* no-op; JS decides final state */ }
+  :root:not(.theme-dark){ /* no-op; JS decides */ }
 }
 
-/* ---- Dark Mode Overrides (toggled by JS via class or data-attr) ---- */
-.theme-dark,
-html[data-theme="dark"]{
-  --bg:#0e0f12;
-  --panel:#15171c;
-  --panel-glass:rgba(255,255,255,.06);
-  --card:#11151d;
-  --elev:#151a23;
-  --stroke:#2a2f39;
-  --border:#232a37;
-  --text:#e9edf1;
-  --fg:#e8eef8;
-  --muted:#a1a8b3;
+/* ---- Dark Mode Overrides (toggled by JS) ---- */
+.theme-dark{
+  --bg:#0e0f12; --panel:#15171c; --panel-glass:rgba(255,255,255,.06);
+  --text:#e9edf1; --muted:#a1a8b3; --stroke:#2a2f39;
   --shadow:0 10px 30px rgba(0,0,0,.35);
 }
 
-/* explicit light fallback for compatibility with your old data-attr */
-html[data-theme="light"]{
-  --bg:#fcfcfd;
-  --panel:#ffffff;
-  --card:#ffffff;
-  --elev:#f3f6fb;
-  --border:#e7eef7;
-  --fg:#0f1521;
-  --text:#0b1020;
-  --muted:#506079;
-  --shadow:0 12px 28px rgba(16,22,33,.08);
-}
+/* keep the rest of your existing CSS BELOW as-is */
 
-/* ===== base ===== */
+html[data-theme="light"]{
+  --bg: #f6f8fb;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --elev: #f3f6fb;
+  --border: #e7eef7;
+  --fg: #0f1521;
+  --muted: #506079;
+  --shadow: 0 12px 28px rgba(16,22,33,.08);
+}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
 body{
@@ -83,11 +61,7 @@ body{
 .page{max-width:1200px;margin:0 auto;padding:20px}
 
 /* --- HERO --- */
-.hero{position:relative;overflow:hidden;border-radius:var(--radius);background:
-  radial-gradient(80% 80% at 10% 10%, rgba(109,225,255,.18), transparent 50%),
-  radial-gradient(70% 70% at 80% 20%, rgba(255,77,109,.18), transparent 60%),
-  var(--panel);
-  box-shadow:var(--shadow);margin-top:10px}
+.hero{position:relative;overflow:hidden;border-radius:var(--radius);background:radial-gradient(80% 80% at 10% 10%, rgba(109,225,255,.18), transparent 50%), radial-gradient(70% 70% at 80% 20%, rgba(255,77,109,.18), transparent 60%), var(--panel);box-shadow:var(--shadow);margin-top:10px}
 .hero-inner{padding:56px 28px}
 .hero h1{margin:6px 0 10px;font-size:42px;line-height:1.1;letter-spacing:.2px}
 .hero .sub{max-width:720px;color:var(--muted);margin:0 0 16px}
@@ -142,11 +116,25 @@ body{
 .rk-table .col-rk{width:60px;text-align:right;font-weight:800}
 .rk-table .col-note{min-width:220px}
 
-.rk-tablewrap { margin-top: 1rem; border: 1px solid var(--border,#23232a); border-radius: 12px; overflow: hidden; }
+.rk-tablewrap {
+  margin-top: 1rem;
+  border: 1px solid var(--border,#23232a);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 .rk-table { width: 100%; border-collapse: collapse; }
-.rk-table th, .rk-table td { padding: 12px 14px; border-bottom: 1px solid var(--border,#23232a); }
-.rk-table thead th { background: var(--card,#141418); text-align: left; font-weight: 700; }
+.rk-table th, .rk-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border,#23232a);
+}
+.rk-table thead th {
+  background: var(--card,#141418);
+  text-align: left;
+  font-weight: 700;
+}
 .rk-table tbody tr:hover { background: rgba(255,255,255,.035); }
+
 .rk-table .col-rank  { width: 72px; text-align: right; }
 .rk-table .col-score { width: 100px; text-align: right; }
 .rk-table .col-note  { color: var(--muted,#9aa3b2); }
@@ -155,6 +143,7 @@ body{
 .rk-table .ath .ath-main { display:block; }
 .rk-table .ath-name { font-weight:700; }
 .rk-table .ath-sub  { color: var(--muted,#9aa3b2); font-size:.92rem; }
+
 
 .ath{display:flex;align-items:center;gap:12px}
 .ath-name{font-weight:800}
@@ -166,6 +155,7 @@ body{
   .rk-filter select{min-width:120px}
   .rk-table thead th{top:calc(56px + 56px)}
 }
+
 
 /* --- MODAL --- */
 .modal{border:0;border-radius:14px;background:var(--panel);color:var(--fg);width:min(900px,96vw)}
@@ -199,7 +189,6 @@ body{
   .grid.highlights{grid-template-columns:1fr 1fr}
   .footer-inner{grid-template-columns:1fr}
 }
-
 /* ===== Athletes grid ===== */
 .page-title{margin-bottom:10px}
 .searchbar{display:flex;gap:10px;align-items:center;margin:10px 0 16px}
@@ -235,7 +224,7 @@ body{
 
 /* frosted veil so the laser looks like a glow */
 .card::after{
-  content:""; position:absolute; inset:0; background:rgba(23,23,23,.35);
+  content:""; position:absolute; inset:0; background:rgba(23,23,23,.35); 
   backdrop-filter:blur(40px); z-index:0; pointer-events:none
 }
 
