@@ -1,12 +1,12 @@
 (() => {
-  // ---- THEME (preserve existing setting)
-   const root = document.documentElement;
+  const root = document.documentElement;
   const toggle = document.getElementById('themeToggle');
   const saved = localStorage.getItem('theme');
 
-  if (saved === 'light' || saved === 'dark') 
-    root.setAttribute('data-theme', saved);
-  
+  // Always set an explicit theme on load
+  const initial = (saved === 'light' || saved === 'dark') ? saved : 'dark';
+  root.setAttribute('data-theme', initial);
+
   toggle && toggle.addEventListener('click', () => {
     const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
