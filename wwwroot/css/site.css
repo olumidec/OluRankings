@@ -18,7 +18,7 @@
 .brand { display:flex; align-items:center; gap:10px; font-weight:800; text-decoration:none; color:var(--fg); }
 .brand-logo { height:26px; width:auto; border-radius:6px; display:block; }
 
-html[data-theme="dark"]{
+html[data-theme="dark"],html:not([data-theme]){
   --bg: #0e0f12;
   --panel: #15171c;
   --card: #141418;
@@ -59,8 +59,13 @@ body{
 .page{max-width:1200px;margin:0 auto;padding:20px}
 
 /* --- HERO --- */
-.hero{position:relative;overflow:hidden;border-radius:var(--radius);background:radial-gradient(80% 80% at 10% 10%, rgba(109,225,255,.18), transparent 50%), radial-gradient(70% 70% at 80% 20%, rgba(255,77,109,.18), transparent 60%), var(--panel);box-shadow:var(--shadow);margin-top:10px}
-.hero-inner{padding:56px 28px}
+.hero{
+  position:relative;overflow:hidden;border-radius:var(--radius);
+  background: radial-gradient(110% 80% at 15% 10%, rgba(255,255,255,.04), transparent 50%),
+              linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,0));
+  box-shadow:var(--shadow); margin-top:10px;
+}
+.hero-inner{ padding:56px 28px; max-width:760px; }
 .hero h1{margin:6px 0 10px;font-size:42px;line-height:1.1;letter-spacing:.2px}
 .hero .sub{max-width:720px;color:var(--muted);margin:0 0 16px}
 .eyebrow{color:var(--brand-2);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
@@ -243,3 +248,6 @@ body{
 /* little “view profile” link */
 .card .link{display:inline-block;margin-top:10px;font-weight:700}
 .card .link:hover{text-decoration:underline}
+/* Auth forms (scoped) */
+.auth-wrap { display:grid; place-items:center; margin:24px 0; }
+.auth-wrap .form { max-width: 420px; width:100%; }

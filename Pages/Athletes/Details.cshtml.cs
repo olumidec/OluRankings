@@ -6,20 +6,17 @@ using OluRankings.Models;
 
 namespace OluRankings.Pages.Athletes
 {
-    public class AthleteDetailsModel : PageModel
+    public class DetailsModel : PageModel
     {
         private readonly ApplicationDbContext _db;
-        public AthleteDetailsModel(ApplicationDbContext db) => _db = db;
+        public DetailsModel(ApplicationDbContext db) => _db = db;
 
-        public Athlete? Athlete { get; set; }
+        public Athlete? Item { get; private set; }
 
-        public async Task<IActionResult> OnGetAsync(string slug)
+        public async Task<IActionResult> OnGetAsync(Guid id)
         {
-            Athlete = await _db.Athletes
-                .Include(a => a.StatLines)
-                .FirstOrDefaultAsync(a => a.Slug == slug);
-
-            return Athlete is null ? NotFound() : Page();
+            Item = await _db.Athletes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            return Item is null ? NotFound() : Page();
         }
     }
 }

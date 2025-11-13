@@ -1,36 +1,25 @@
-@page
-@model AthleteDetailsModel
+@page "{id:guid}"
+@model OluRankings.Pages.Athletes.DetailsModel
 @{
-    var a = Model.Athlete;
-    ViewData["Title"] = a is null ? "Athlete" : $"{a.GivenName} {a.FamilyName}";
+    ViewData["Title"] = $"{Model.Item?.GivenName} {Model.Item?.FamilyName}";
 }
-@if (a is null) { <p>Not found.</p> }
-else {
-  <article class="athlete" style="display:grid;gap:12px">
-    <div style="display:flex;gap:12px;align-items:center">
-      <div class="avatar" style="width:64px;height:64px">
-        @if (!string.IsNullOrWhiteSpace(a.HeadshotUrl))
-        { <img src="@a.HeadshotUrl" alt="Headshot of @a.GivenName @a.FamilyName" /> }
-        else { <span>@(a.GivenName[0])@(a.FamilyName[0])</span> }
-      </div>
-      <div>
-        <h1 style="margin:0">@a.GivenName @a.FamilyName</h1>
-        <p class="muted" style="margin:2px 0 0">
-          @(a.Position ?? "—") • @(a.ClassYear is int cy ? $"Class of {cy}" : "—")
-          • @(a.School ?? a.Club ?? "—") • @(a.Region ?? "—")
-        </p>
-      </div>
+
+<section class="card" style="max-width:860px;margin:20px auto;">
+  <div style="display:flex;gap:16px;align-items:flex-start;">
+    <div class="avatar" style="width:100px;height:100px;">
+      @if (!string.IsNullOrWhiteSpace(Model.Item?.HeadshotUrl))
+      { <img src="@Model.Item!.HeadshotUrl" alt="Headshot" /> }
+      else { <span>@Model.Item?.GivenName?.Substring(0,1)</span> }
     </div>
 
-    <div class="stats" style="border:1px solid var(--border,#23232a);border-radius:12px;padding:12px">
-      @foreach (var s in a.StatLines.OrderByDescending(s => s.Season))
-      {
-        <div style="padding:6px 0;border-top:1px solid var(--border,#23232a)">
-          <strong>@s.Season</strong>
-          — PPG @s.PointsPerGame, APG @s.AssistsPerGame, RPG @s.ReboundsPerGame
-          @if (s.IsVerified) { <span class="badge" style="margin-left:8px">Verified</span> }
-        </div>
-      }
+    <div>
+      <h2 class="ath-name">@Model.Item?.GivenName @Model.Item?.FamilyName</h2>
+      <div class="ath-sub">
+        @Model.Item?.Position
+        @if (Model.Item?.ClassYear is not null) { <span> • @Model.Item!.ClassYear</span> }
+        @if (!string.IsNullOrWhiteSpace(Model.Item?.School)) { <span> • @Model.Item!.School</span> }
+        @if (!string.IsNullOrWhiteSpace(Model.Item?.Club)) { <span> • @Model.Item!.Club</span> }
+      </div>
     </div>
-  </article>
-}
+  </div>
+</section>
