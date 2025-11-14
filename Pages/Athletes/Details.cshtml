@@ -8,17 +8,40 @@
   <div style="display:flex;gap:16px;align-items:flex-start;">
     <div class="avatar" style="width:100px;height:100px;">
       @if (!string.IsNullOrWhiteSpace(Model.Item?.HeadshotUrl))
-      { <img src="@Model.Item!.HeadshotUrl" alt="Headshot" /> }
-      else { <span>@Model.Item?.GivenName?.Substring(0,1)</span> }
+      {
+          <img src="@Model.Item!.HeadshotUrl" alt="Headshot" />
+      }
+      else
+      {
+          <span>@Model.Item?.GivenName?.Substring(0,1)</span>
+      }
     </div>
 
     <div>
       <h2 class="ath-name">@Model.Item?.GivenName @Model.Item?.FamilyName</h2>
       <div class="ath-sub">
         @Model.Item?.Position
-        @if (Model.Item?.ClassYear is not null) { <span> • @Model.Item!.ClassYear</span> }
-        @if (!string.IsNullOrWhiteSpace(Model.Item?.School)) { <span> • @Model.Item!.School</span> }
-        @if (!string.IsNullOrWhiteSpace(Model.Item?.Club)) { <span> • @Model.Item!.Club</span> }
+        @if (Model.Item?.ClassYear is not null)
+        {
+            <span> • @Model.Item!.ClassYear</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Item?.School))
+        {
+            <span> • @Model.Item!.School</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Item?.Club))
+        {
+            <span> • @Model.Item!.Club</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Item?.Region))
+        {
+            <span> • @Model.Item!.Region</span>
+        }
+      </div>
+
+      <div class="muted" style="margin-top:10px;font-size:.9rem;">
+        @* You can add more structured info here later: height, weight, verified badge, etc. *@
+        Created @Model.Item?.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
       </div>
     </div>
   </div>

@@ -1,11 +1,35 @@
-<div class="footer-inner">
-  <p>© @DateTime.UtcNow.Year OluRankings. All rights reserved.</p>
-  <div class="footer-links">
-    <a asp-page="/Index">Home</a>
-    <a asp-page="/Rankings/Index">Rankings</a>
-    <a asp-page="/Submit/Index">Submit</a>
-    <a asp-page="/Legal/Terms">Terms</a>
-<a asp-page="/Legal/Privacy">Privacy</a>
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="f-brand">
+            OluRankings
+            <div class="muted">
+                UK Youth Rankings. Verified profiles. Stats that matter.
+            </div>
+        </div>
 
-  </div>
-</div>
+        <div class="f-cols">
+            <div>
+                <div class="f-title">Explore</div>
+                <a asp-page="/Rankings/Index">Rankings</a>
+                <a asp-page="/Athletes/Index">Athletes</a>
+                <a asp-page="/News/Index">Top News</a>
+            </div>
+
+            <div>
+                <div class="f-title">Contribute</div>
+                <a asp-page="/Submit/Index">Submit Profile</a>
+                <a asp-page="/Teams/Manage">Teams</a>
+            </div>
+
+            <div>
+                <div class="f-title">Legal</div>
+                <a asp-page="/Terms">Terms</a>
+                <a asp-page="/Privacy">Privacy</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bar">
+        © @DateTime.UtcNow.Year OluRankings. All rights reserved.
+    </div>
+</footer>
