@@ -1,5 +1,6 @@
 @page
 @model OluRankings.Pages.Rankings.RankingsIndexModel
+@using Microsoft.AspNetCore.Mvc.Rendering
 @{
     ViewData["Title"] = "Rankings";
 
@@ -15,6 +16,8 @@
             : (!string.IsNullOrWhiteSpace(a.School) ? a.School
                : !string.IsNullOrWhiteSpace(a.Club) ? a.Club
                : "—");
+
+    var hasRows = Model.Rows is not null && Model.Rows.Count > 0;
 }
 
 <section class="rk-wrap">
@@ -22,21 +25,22 @@
     <h1>Rankings</h1>
 
     <form method="get" class="rk-filters" role="search" aria-label="Rankings filters">
+
       <label class="rk-filter">
         <span>List</span>
-        <select name="Publisher" asp-for="Publisher" asp-items="@(new SelectList(Model.Publishers))"></select>
+        <select asp-for="Publisher" asp-items="@(new SelectList(Model.Publishers))"></select>
       </label>
 
       <label class="rk-filter">
         <span>Sport</span>
-        <select name="Sport" asp-for="Sport">
+        <select asp-for="Sport">
           <option value="basketball" selected>Basketball</option>
         </select>
       </label>
 
       <label class="rk-filter">
         <span>Age Group</span>
-        <select name="AgeGroup" asp-for="AgeGroup">
+        <select asp-for="AgeGroup">
           <option>U14</option>
           <option selected>U16</option>
           <option>U18</option>
@@ -45,10 +49,24 @@
 
       <label class="rk-filter">
         <span>Period</span>
-        <select name="Period" asp-for="Period" asp-items="@(new SelectList(Model.Periods))">
+        <select asp-for="Period" asp-items="@(new SelectList(Model.Periods))">
           <option value="">Latest</option>
         </select>
       </label>
+
+      <label class="rk-filter">
+        <span>Sort</span>
+        <select asp-for="Sort">
+          <option value="rank">Rank</option>
+          <option value="name">Name</option>
+          <option value="team">School/Club</option>
+          <option value="region">Region</option>
+          <option value="score">Score</option>
+        </select>
+      </label>
+
+      <input type="hidden" name="PageNumber" value="1" />
+      <input type="hidden" name="PageSize" value="@Model.PageSize" />
 
       <button class="rk-apply" type="submit">Apply</button>
     </form>
@@ -60,14 +78,21 @@
         <span class="muted">
           Published @Model.Ranking.PublishedAt.ToLocalTime().ToString("MMM d, yyyy")
         </span>
+        <span class="muted">• @Model.TotalRows results</span>
       </p>
     }
   </header>
 
-  @if (Model.Ranking is null || Model.Ranking.Entries is null || !Model.Ranking.Entries.Any())
+  @if (Model.Ranking is null)
   {
     <div class="rk-empty">
       <p>No ranking found for the selected filters.</p>
+    </div>
+  }
+  else if (!hasRows)
+  {
+    <div class="rk-empty">
+      <p>No entries found for this ranking yet.</p>
     </div>
   }
   else
@@ -82,15 +107,18 @@
             <th class="hide-sm">School / Club</th>
             <th class="hide-md">Region</th>
             <th class="hide-md">Height</th>
+            <th class="hide-md">Score</th>
             <th class="col-note">Notes</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-        @foreach (var e in Model.Ranking.Entries.OrderBy(x => x.Rank))
+        @foreach (var e in (Model.Rows ?? Array.Empty<OluRankings.Models.RankingEntry>()))
         {
             var a = e.Athlete;
             <tr>
               <td class="col-rk">@e.Rank</td>
+
               <td>
                 <div class="ath">
                   <div class="ath-main">
@@ -101,15 +129,44 @@
                   </div>
                 </div>
               </td>
+
               <td class="hide-sm">@(@a?.Position ?? "—")</td>
               <td class="hide-sm">@TeamText(a)</td>
               <td class="hide-md">@(@a?.Region ?? "—")</td>
               <td class="hide-md">@HeightText(a?.HeightCm)</td>
+              <td class="hide-md">@e.Score.ToString("0.0")</td>
               <td class="col-note">@(!string.IsNullOrWhiteSpace(e.Notes) ? e.Notes : "—")</td>
+
+              <td class="col-act">
+                <a class="rk-link" asp-page="/Athletes/Details" asp-route-id="@a?.Id">View</a>
+              </td>
             </tr>
         }
         </tbody>
       </table>
+    </div>
+
+    <div class="rk-pager">
+      <form method="get" class="rk-pager__form">
+        <input type="hidden" name="Publisher" value="@Model.Publisher" />
+        <input type="hidden" name="Sport" value="@Model.Sport" />
+        <input type="hidden" name="AgeGroup" value="@Model.AgeGroup" />
+        <input type="hidden" name="Period" value="@Model.Period" />
+        <input type="hidden" name="Sort" value="@Model.Sort" />
+        <input type="hidden" name="PageSize" value="@Model.PageSize" />
+
+        <button class="rk-btn" name="PageNumber" value="@(Model.PageNumber - 1)" @(Model.PageNumber <= 1 ? "disabled" : null)>
+          Prev
+        </button>
+
+        <span class="rk-pageinfo">
+          Page <strong>@Model.PageNumber</strong> of <strong>@(Model.TotalPages == 0 ? 1 : Model.TotalPages)</strong>
+        </span>
+
+        <button class="rk-btn" name="PageNumber" value="@(Model.PageNumber + 1)" @(Model.PageNumber >= Model.TotalPages ? "disabled" : null)>
+          Next
+        </button>
+      </form>
     </div>
   }
 </section>
