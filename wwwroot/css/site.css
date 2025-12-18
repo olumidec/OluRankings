@@ -501,3 +501,26 @@ body{
   justify-content: space-between;
   flex-wrap: wrap;
 }
+/* === Rankings mobile fix: prevent columns "disappearing" === */
+.rk-tablewrap{
+  overflow-x: auto !important;      /* allow horizontal scroll */
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure the table has enough width so it scrolls instead of clipping */
+.rk-table{
+  min-width: 760px;                /* adjust if you want tighter */
+}
+
+/* Optional: keep key text readable */
+.rk-table th, .rk-table td{
+  white-space: nowrap;
+}
+
+/* But let Notes wrap (so it doesn't explode width) */
+.rk-table .col-note{
+  white-space: normal;
+  min-width: 220px;
+}
+
