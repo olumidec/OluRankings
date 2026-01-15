@@ -17,7 +17,7 @@ namespace OluRankings.Models
         [MaxLength(120)]           public string? School { get; set; }
         [MaxLength(120)]           public string? Club { get; set; }
         public int? ClassYear { get; set; }
-        public DateTime? Dob { get; set; }
+        public DateOnly? Dob { get; set; }
 
         // Evidence (passport image/pdf) saved under wwwroot/evidence or Blob later
         [Required, MaxLength(512)] public string EvidencePath { get; set; } = default!;
@@ -27,8 +27,8 @@ namespace OluRankings.Models
         public SubmissionStatus Status { get; set; } = SubmissionStatus.Pending;
         [MaxLength(256)] public string? ReviewerNote { get; set; }
         public string? ReviewedByUserId { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? ReviewedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? ReviewedAt { get; set; }
 
         // Once approved we can link it to the canonical Athlete record
         public Guid? AthleteId { get; set; }

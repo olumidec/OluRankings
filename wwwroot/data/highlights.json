@@ -1,18 +1,58 @@
 [
   {
-    "id": "yt_001",
-    "type": "youtube",
-    "title": "U16 Guard goes off for 28",
-    "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    "thumb": "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
-    "meta": "U16 • London Showcase"
+    "id": "olu_tiktok",
+    "type": "link",
+    "title": "Follow OluSports on TikTok",
+    "url": "https://www.tiktok.com/@olusports",
+    "thumb": "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-avt-0068c001-no/f176dfc0cbbca2704764dda0e6f300f2~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=10399&refresh_token=118d8201&x-expires=1768654800&x-signature=4xhvdvEbgU6F5w0R8NF9L3OcF2w%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=no1a",
+    "meta": "Clips • UK hoops • @olusports"
   },
   {
-    "id": "tt_001",
-    "type": "tiktok",
-    "title": "Insane chase-down block",
-    "url": "https://www.tiktok.com/@olusports/video/7350000000000000000",
-    "thumb": "/img/placeholders/tiktok.jpg",
-    "meta": "U14 • Midlands"
+    "id": "slb_trophy_leg1",
+    "type": "youtube",
+    "title": "London Lions v Bristol Flyers | Condensed Game | Jan 2, 2026",
+    "url": "https://www.youtube.com/watch?v=7q4UPhSP5OQ",
+    "thumb": "https://img.youtube.com/vi/7q4UPhSP5OQ/hqdefault.jpg",
+    "meta": "SLB Trophy • Semi-Final"
+  },
+  {
+    "id": "slb_trophy_leg2",
+    "type": "youtube",
+    "title": "Bristol Flyers v London Lions | Condensed Game | Jan 2, 2026",
+    "url": "https://www.youtube.com/watch?v=jxfLmHiFbUc",
+    "thumb": "https://img.youtube.com/vi/jxfLmHiFbUc/hqdefault.jpg",
+    "meta": "SLB Trophy • Semi-Final"
+  },
+  {
+    "id": "slb_highlights_leg1",
+    "type": "youtube",
+    "title": "London Lions 77-58 Bristol Flyers | Highlights",
+    "url": "https://www.youtube.com/watch?v=SVEV0DIpe_s",
+    "thumb": "https://img.youtube.com/vi/SVEV0DIpe_s/hqdefault.jpg",
+    "meta": "SLB • Highlights"
+  },
+  {
+    "id": "slb_highlights_leg2",
+    "type": "youtube",
+    "title": "Bristol Flyers 76-77 London Lions | Highlights",
+    "url": "https://www.youtube.com/watch?v=gOGUjhL2dDc",
+    "thumb": "https://img.youtube.com/vi/gOGUjhL2dDc/hqdefault.jpg",
+    "meta": "SLB • Highlights"
+  },
+  {
+    "id": "lions_eurocup_highlights",
+    "type": "youtube",
+    "title": "London Lions vs Türk Telekom | Game Highlights | 14.01.26",
+    "url": "https://www.youtube.com/watch?v=smGqbNOhfqs",
+    "thumb": "https://img.youtube.com/vi/smGqbNOhfqs/hqdefault.jpg",
+    "meta": "EuroCup • London Lions"
+  },
+  {
+    "id": "slbw_2026_01_11",
+    "type": "youtube",
+    "title": "Manchester Basketball vs Leicester Riders | 11 Jan 2026",
+    "url": "https://www.youtube.com/watch?v=zbvX3_VB8v8",
+    "thumb": "https://img.youtube.com/vi/zbvX3_VB8v8/hqdefault.jpg",
+    "meta": "SLB Women’s • Game"
   }
 ]
