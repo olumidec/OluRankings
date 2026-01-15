@@ -5,6 +5,12 @@
 
     string AgeBand(int? classYear)
         => classYear.HasValue ? $"U{(DateTime.UtcNow.Year - classYear.Value + 18)}" : "U16";
+
+    string PrettyDate(string? iso)
+    {
+        if (string.IsNullOrWhiteSpace(iso)) return "—";
+        return DateTime.TryParse(iso, out var dt) ? dt.ToString("yyyy-MM-dd") : iso;
+    }
 }
 
 <h1 class="mb-3">Pending Submissions</h1>
@@ -39,13 +45,16 @@ else
                         @: / @s.Club
                     }
                 </td>
-                <td>@s.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>@PrettyDate(s.CreatedAt)</td>
                 <td>@s.Status</td>
                 <td>
-                    <form method="post" asp-page-handler="Approve" class="d-inline">
+                    <a class="btn btn-sm btn-outline" asp-page="Detail" asp-route-id="@s.Id">Review</a>
+
+                    <form method="post" asp-page-handler="Approve" class="d-inline ms-2">
                         <input type="hidden" name="id" value="@s.Id" />
                         <button type="submit" class="btn btn-sm btn-success">Approve</button>
                     </form>
+
                     <form method="post" asp-page-handler="Reject" class="d-inline ms-2">
                         <input type="hidden" name="id" value="@s.Id" />
                         <button type="submit" class="btn btn-sm btn-danger">Reject</button>

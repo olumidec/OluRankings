@@ -6,64 +6,77 @@ using OluRankings.Data;
 using OluRankings.Models;
 using OluRankings.Identity;
 
-[Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Ranker}")]
-public class DetailModel : PageModel
+namespace OluRankings.Pages.Admin.Submissions
 {
-    private readonly ApplicationDbContext _db;
-    public DetailModel(ApplicationDbContext db) { _db = db; }
-
-    public AthleteSubmission? Submission { get; set; }
-
-    [BindProperty] public bool CreateNewAthlete { get; set; } = true;
-    [BindProperty] public Guid? ExistingAthleteId { get; set; }
-
-    public async Task<IActionResult> OnGetAsync(int id)
+    [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Ranker}")]
+    public class DetailModel : PageModel
     {
-        Submission = await _db.AthleteSubmissions.FindAsync(id);
-        return Submission is null ? NotFound() : Page();
-    }
+        private readonly ApplicationDbContext _db;
+        public DetailModel(ApplicationDbContext db) { _db = db; }
 
-    public async Task<IActionResult> OnPostApproveAsync(int id)
-    {
-        var s = await _db.AthleteSubmissions.FirstOrDefaultAsync(x => x.Id == id);
-        if (s is null || s.Status != SubmissionStatus.Pending) return NotFound();
+        public AthleteSubmission? Submission { get; set; }
 
-        Athlete athlete;
-        if (CreateNewAthlete || ExistingAthleteId is null)
+        [BindProperty] public bool CreateNewAthlete { get; set; } = true;
+        [BindProperty] public Guid? ExistingAthleteId { get; set; }
+
+        [BindProperty] public string? RejectReason { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            athlete = new Athlete {
-                GivenName = s.GivenName, FamilyName = s.FamilyName,
-                School = s.School, Club = s.Club, ClassYear = s.ClassYear,
-                // Slug can be built however you do elsewhere
-                Slug = $"{s.GivenName}-{s.FamilyName}-{Guid.NewGuid().ToString("N")[..6]}".ToLowerInvariant()
-            };
-            _db.Athletes.Add(athlete);
-        }
-        else
-        {
-            athlete = await _db.Athletes.FindAsync(ExistingAthleteId.Value) ?? throw new Exception("Athlete not found");
+            Submission = await _db.AthleteSubmissions.FindAsync(id);
+            return Submission is null ? NotFound() : Page();
         }
 
-        s.Status = SubmissionStatus.Approved;
-        s.ReviewedAt = DateTime.UtcNow;
-        s.ReviewedByUserId = User.Identity?.Name;
-        s.Athlete = athlete;
+        public async Task<IActionResult> OnPostApproveAsync(int id)
+        {
+            var s = await _db.AthleteSubmissions.FirstOrDefaultAsync(x => x.Id == id);
+            if (s is null || s.Status != SubmissionStatus.Pending) return NotFound();
 
-        await _db.SaveChangesAsync();
-        return RedirectToPage("Index");
-    }
+            Athlete athlete;
+            if (CreateNewAthlete || ExistingAthleteId is null)
+            {
+                athlete = new Athlete {
+                    GivenName = s.GivenName,
+                    FamilyName = s.FamilyName,
+                    School = s.School,
+                    Club = s.Club,
+                    ClassYear = s.ClassYear,
+                    Slug = $"{s.GivenName}-{s.FamilyName}-{Guid.NewGuid().ToString("N")[..6]}".ToLowerInvariant()
+                };
+                _db.Athletes.Add(athlete);
+            }
+            else
+            {
+                athlete = await _db.Athletes.FindAsync(ExistingAthleteId.Value)
+                          ?? throw new Exception("Athlete not found");
+            }
 
-    public async Task<IActionResult> OnPostRejectAsync(int id, string? reason)
-    {
-        var s = await _db.AthleteSubmissions.FirstOrDefaultAsync(x => x.Id == id);
-        if (s is null || s.Status != SubmissionStatus.Pending) return NotFound();
+            s.Status = SubmissionStatus.Approved;
 
-        s.Status = SubmissionStatus.Rejected;
-        s.ReviewerNote = reason;
-        s.ReviewedAt = DateTime.UtcNow;
-        s.ReviewedByUserId = User.Identity?.Name;
+            // ✅ DB expects text (string) right now
+            s.ReviewedAt = DateTime.UtcNow.ToString("O");
+            s.ReviewedByUserId = User.Identity?.Name;
 
-        await _db.SaveChangesAsync();
-        return RedirectToPage("Index");
+            s.Athlete = athlete;
+
+            await _db.SaveChangesAsync();
+            return RedirectToPage("Index");
+        }
+
+        public async Task<IActionResult> OnPostRejectAsync(int id)
+        {
+            var s = await _db.AthleteSubmissions.FirstOrDefaultAsync(x => x.Id == id);
+            if (s is null || s.Status != SubmissionStatus.Pending) return NotFound();
+
+            s.Status = SubmissionStatus.Rejected;
+            s.ReviewerNote = string.IsNullOrWhiteSpace(RejectReason) ? null : RejectReason.Trim();
+
+            // ✅ DB expects text (string) right now
+            s.ReviewedAt = DateTime.UtcNow.ToString("O");
+            s.ReviewedByUserId = User.Identity?.Name;
+
+            await _db.SaveChangesAsync();
+            return RedirectToPage("Index");
+        }
     }
 }

@@ -633,3 +633,66 @@ body{
   .submit-actions{ justify-content: stretch; }
   .submit-actions .btn{ width: 100%; text-align:center; }
 }
+/* =========================
+   SUBMIT ATHLETE (scoped)
+   ========================= */
+.submit-wrap{ max-width:920px; margin:0 auto; padding: 10px 0 28px; }
+.submit-card{
+  border-radius: 20px;
+  padding: 22px 20px 18px;
+  background: rgba(26,26,26,.92);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 16px 46px rgba(0,0,0,.45);
+  backdrop-filter: blur(10px);
+}
+.submit-head{ display:flex; justify-content:space-between; gap:14px; align-items:flex-start; margin-bottom:10px; }
+.submit-head h1{ margin:0; font-size:28px; letter-spacing:-0.4px; }
+.submit-head p{ margin:6px 0 0; color: var(--muted); max-width:62ch; }
+.submit-form{ display:grid; gap:12px; margin-top:12px; }
+
+.submit-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+.submit-field{ display:grid; gap:6px; }
+.submit-field label{ color: rgba(255,255,255,.72); font-size:13px; font-weight:800; }
+
+.submit-field input,
+.submit-field select{
+  width:100%;
+  padding:12px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(51,51,51,.85);
+  color: var(--fg);
+  outline:none;
+}
+
+.submit-field input:focus,
+.submit-field select:focus{
+  border-color: rgba(109,225,255,.7);
+  box-shadow: 0 0 0 4px rgba(109,225,255,.18);
+}
+
+.submit-help{ color: var(--muted); font-size:13px; margin-top:2px; }
+
+.submit-consent{
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 16px;
+  padding: 12px;
+  background: rgba(255,255,255,.03);
+}
+
+.submit-actions{ display:flex; justify-content:flex-end; margin-top:6px; }
+
+.alert{
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(109,225,255,.10);
+  color: var(--fg);
+  margin: 10px 0;
+}
+
+@media (max-width: 720px){
+  .submit-grid{ grid-template-columns:1fr; }
+  .submit-actions{ justify-content: stretch; }
+  .submit-actions .btn{ width:100%; text-align:center; }
+}

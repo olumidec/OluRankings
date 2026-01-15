@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using OluRankings.Services;
 using OluRankings.Data;
 using OluRankings.Models;
+using System.Security.Claims;
 
 namespace OluRankings.Pages.Submit
 {
@@ -36,7 +37,6 @@ namespace OluRankings.Pages.Submit
 
         [BindProperty] public bool Consent { get; set; }
 
-        // **This is what the view expects**
         [BindProperty] public IFormFile? Evidence { get; set; }
 
         public void OnGet() { }
@@ -44,6 +44,13 @@ namespace OluRankings.Pages.Submit
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid) return Page();
+
+            // Server-side consent guard (HTML required isn't enough)
+            if (!Consent)
+            {
+                ModelState.AddModelError(nameof(Consent), "Parental/guardian consent is required.");
+                return Page();
+            }
 
             // CAPTCHA check
             var token = Request.Form["cf-turnstile-response"].ToString();
@@ -57,7 +64,7 @@ namespace OluRankings.Pages.Submit
             // Optional evidence upload (JPG/PNG/PDF, <= 10MB)
             string evidencePath = "";
             string? evidenceContentType = null;
-            long evidenceBytes = 0;
+            int evidenceBytes = 0; // ✅ DB is integer
 
             if (Evidence is not null)
             {
@@ -70,32 +77,54 @@ namespace OluRankings.Pages.Submit
 
                 var folder = Path.Combine(_env.WebRootPath, "evidence");
                 Directory.CreateDirectory(folder);
+
                 var fn = $"{Guid.NewGuid()}{Path.GetExtension(Evidence.FileName)}";
                 var savePath = Path.Combine(folder, fn);
+
                 using (var fs = System.IO.File.Create(savePath))
                     await Evidence.CopyToAsync(fs);
 
                 evidencePath = $"/evidence/{fn}";
                 evidenceContentType = Evidence.ContentType;
-                evidenceBytes = Evidence.Length;
+                evidenceBytes = (int)Evidence.Length; // ✅ fix CS0266
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                ModelState.AddModelError("", "You must be signed in to submit.");
+                return Page();
             }
 
             // Persist submission (maps to AthleteSubmission)
             _db.AthleteSubmissions.Add(new AthleteSubmission
             {
-                SubmittedByUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value,
-                GivenName = FirstName,
-                FamilyName = LastName,
-                School = string.IsNullOrWhiteSpace(School) ? null : School,
-                Club = null, // map if you add a field
+                SubmittedByUserId = userId,
+                GivenName = FirstName.Trim(),
+                FamilyName = LastName.Trim(),
+                School = string.IsNullOrWhiteSpace(School) ? null : School.Trim(),
+                Club = null,
                 ClassYear = null,
                 Dob = null,
-                EvidencePath = evidencePath,
+
+                EvidencePath = evidencePath,              // if Evidence is optional, consider defaulting to "/img/placeholders/id.png" instead
                 EvidenceContentType = evidenceContentType,
-                EvidenceBytes = evidenceBytes
+                EvidenceBytes = evidenceBytes,
+
+                Status = SubmissionStatus.Pending,
+
+                // ✅ DB expects text, not DateTime
+                CreatedAt = DateTime.UtcNow.ToString("O"),
+
+                // Not in DB yet, so don’t set them here unless you added columns:
+                // VideoUrl = VideoUrl,
+                // Region = Region,
+                // Position = Position,
+                // AgeGroup = AgeGroup,
             });
 
             await _db.SaveChangesAsync();
+
             TempData["Message"] = "Profile submitted successfully!";
             return RedirectToPage("/Submit/Success");
         }
