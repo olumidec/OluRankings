@@ -30,12 +30,14 @@ namespace OluRankings.Pages.Admin.Submissions
         public async Task<IActionResult> OnPostApproveAsync(int id)
         {
             var s = await _db.AthleteSubmissions.FirstOrDefaultAsync(x => x.Id == id);
-            if (s is null || s.Status != SubmissionStatus.Pending) return NotFound();
+            if (s is null) return NotFound();
+            if (s.Status != SubmissionStatus.Pending) return RedirectToPage("./Index");
 
             Athlete athlete;
             if (CreateNewAthlete || ExistingAthleteId is null)
             {
-                athlete = new Athlete {
+                athlete = new Athlete
+                {
                     GivenName = s.GivenName,
                     FamilyName = s.FamilyName,
                     School = s.School,
@@ -52,31 +54,27 @@ namespace OluRankings.Pages.Admin.Submissions
             }
 
             s.Status = SubmissionStatus.Approved;
-
-            // ✅ DB expects text (string) right now
-            s.ReviewedAt = DateTime.UtcNow.ToString("O");
+            s.ReviewedAt = DateTime.UtcNow.ToString("O"); // string in DB right now
             s.ReviewedByUserId = User.Identity?.Name;
-
             s.Athlete = athlete;
 
             await _db.SaveChangesAsync();
-            return RedirectToPage("Index");
+            return RedirectToPage("./Index");
         }
 
         public async Task<IActionResult> OnPostRejectAsync(int id)
         {
             var s = await _db.AthleteSubmissions.FirstOrDefaultAsync(x => x.Id == id);
-            if (s is null || s.Status != SubmissionStatus.Pending) return NotFound();
+            if (s is null) return NotFound();
+            if (s.Status != SubmissionStatus.Pending) return RedirectToPage("./Index");
 
             s.Status = SubmissionStatus.Rejected;
             s.ReviewerNote = string.IsNullOrWhiteSpace(RejectReason) ? null : RejectReason.Trim();
-
-            // ✅ DB expects text (string) right now
-            s.ReviewedAt = DateTime.UtcNow.ToString("O");
+            s.ReviewedAt = DateTime.UtcNow.ToString("O"); // string in DB right now
             s.ReviewedByUserId = User.Identity?.Name;
 
             await _db.SaveChangesAsync();
-            return RedirectToPage("Index");
+            return RedirectToPage("./Index");
         }
     }
 }

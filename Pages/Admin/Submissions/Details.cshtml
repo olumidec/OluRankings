@@ -1,0 +1,123 @@
+@page "{id:int}"
+@model OluRankings.Pages.Admin.Submissions.DetailModel
+@{
+    ViewData["Title"] = "Review Submission";
+
+    string PrettyDate(string? iso)
+    {
+        if (string.IsNullOrWhiteSpace(iso)) return "—";
+        return DateTime.TryParse(iso, out var dt) ? dt.ToString("yyyy-MM-dd HH:mm") : iso!;
+    }
+}
+
+@if (Model.Submission is null)
+{
+    <div class="rk-empty">Submission not found.</div>
+    return;
+}
+
+<div class="rk-card" style="max-width: 980px; margin: 0 auto;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+        <div>
+            <h1 style="margin:0;">Review Submission</h1>
+            <p style="margin:6px 0 0; color: var(--muted);">
+                @Model.Submission.GivenName @Model.Submission.FamilyName • Status: <strong>@Model.Submission.Status</strong>
+            </p>
+        </div>
+
+        <a class="btn" asp-page="./Index">Back</a>
+    </div>
+
+    <hr style="margin:16px 0; opacity:.2;" />
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+        <div>
+            <h3 style="margin:0 0 8px;">Player details</h3>
+            <div><strong>Name:</strong> @Model.Submission.GivenName @Model.Submission.FamilyName</div>
+            <div><strong>School:</strong> @(string.IsNullOrWhiteSpace(Model.Submission.School) ? "—" : Model.Submission.School)</div>
+            <div><strong>Club:</strong> @(string.IsNullOrWhiteSpace(Model.Submission.Club) ? "—" : Model.Submission.Club)</div>
+            <div><strong>Class Year:</strong> @(Model.Submission.ClassYear?.ToString() ?? "—")</div>
+            <div><strong>DOB:</strong> @(Model.Submission.Dob?.ToString() ?? "—")</div>
+        </div>
+
+        <div>
+            <h3 style="margin:0 0 8px;">Submission info</h3>
+            <div><strong>Submitted By:</strong> @Model.Submission.SubmittedByUserId</div>
+            <div><strong>Created:</strong> @PrettyDate(Model.Submission.CreatedAt)</div>
+            <div><strong>Reviewed:</strong> @PrettyDate(Model.Submission.ReviewedAt)</div>
+            <div><strong>Reviewed By:</strong> @(string.IsNullOrWhiteSpace(Model.Submission.ReviewedByUserId) ? "—" : Model.Submission.ReviewedByUserId)</div>
+        </div>
+    </div>
+
+    <hr style="margin:16px 0; opacity:.2;" />
+
+    <div>
+        <h3 style="margin:0 0 8px;">Evidence</h3>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Submission.EvidencePath))
+        {
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <a class="btn btn-outline" href="@Model.Submission.EvidencePath" target="_blank" rel="noopener">Open evidence</a>
+                <span style="color: var(--muted); font-size: 13px;">
+                    @(Model.Submission.EvidenceContentType ?? "unknown") • @Model.Submission.EvidenceBytes bytes
+                </span>
+            </div>
+
+            @* Optional preview for images *@
+            @if ((Model.Submission.EvidenceContentType ?? "").StartsWith("image/"))
+            {
+                <div style="margin-top:12px;">
+                    <img src="@Model.Submission.EvidencePath" alt="Evidence" style="max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.12);" />
+                </div>
+            }
+        }
+        else
+        {
+            <div class="rk-empty">No evidence uploaded.</div>
+        }
+    </div>
+
+    <hr style="margin:16px 0; opacity:.2;" />
+
+    @if (Model.Submission.Status == OluRankings.Models.SubmissionStatus.Pending)
+    {
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; align-items:start;">
+            <div>
+                <h3 style="margin:0 0 8px;">Approve</h3>
+                <form method="post" asp-page-handler="Approve">
+                    <input type="hidden" name="id" value="@Model.Submission.Id" />
+
+                    <label style="display:flex; gap:10px; align-items:center; margin: 10px 0;">
+                        <input asp-for="CreateNewAthlete" type="checkbox" />
+                        <span>Create new athlete record (recommended)</span>
+                    </label>
+
+                    <div style="margin: 10px 0;">
+                        <label style="display:block; margin-bottom:6px;">Existing Athlete Id (optional)</label>
+                        <input asp-for="ExistingAthleteId" placeholder="Paste Athlete UUID if linking existing" />
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Approve submission</button>
+                </form>
+            </div>
+
+            <div>
+                <h3 style="margin:0 0 8px;">Reject</h3>
+                <form method="post" asp-page-handler="Reject">
+                    <input type="hidden" name="id" value="@Model.Submission.Id" />
+
+                    <div style="margin: 10px 0;">
+                        <label style="display:block; margin-bottom:6px;">Reason (optional)</label>
+                        <textarea asp-for="RejectReason" rows="4" style="width:100%; border-radius:14px; padding:10px;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger">Reject submission</button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="rk-empty">This submission has already been reviewed.</div>
+    }
+</div>

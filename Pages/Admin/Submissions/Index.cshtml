@@ -9,7 +9,7 @@
     string PrettyDate(string? iso)
     {
         if (string.IsNullOrWhiteSpace(iso)) return "—";
-        return DateTime.TryParse(iso, out var dt) ? dt.ToString("yyyy-MM-dd") : iso;
+        return DateTime.TryParse(iso, out var dt) ? dt.ToString("yyyy-MM-dd") : iso!;
     }
 }
 
@@ -29,7 +29,7 @@ else
                 <th>School / Club</th>
                 <th>Submitted</th>
                 <th>Status</th>
-                <th style="width:260px;"></th>
+                <th style="width:320px;"></th>
             </tr>
         </thead>
         <tbody>
@@ -48,7 +48,8 @@ else
                 <td>@PrettyDate(s.CreatedAt)</td>
                 <td>@s.Status</td>
                 <td>
-                    <a class="btn btn-sm btn-outline" asp-page="Detail" asp-route-id="@s.Id">Review</a>
+                    <!-- ✅ Same-folder route so it always resolves -->
+                    <a class="btn btn-sm btn-outline" asp-page="./Detail" asp-route-id="@s.Id">Review</a>
 
                     <form method="post" asp-page-handler="Approve" class="d-inline ms-2">
                         <input type="hidden" name="id" value="@s.Id" />
