@@ -13,56 +13,63 @@
     }
 }
 
-<h1 class="mb-3">Pending Submissions</h1>
+<section class="sub-wrap">
+  <div class="sub-head">
+    <h1>Pending Submissions</h1>
+    <p>Review, approve or reject submissions before anything goes public.</p>
+  </div>
 
-@if (Model.Pending == null || Model.Pending.Count == 0)
-{
-    <div class="rk-empty">No pending submissions.</div>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Sport/Age</th>
-                <th>School / Club</th>
-                <th>Submitted</th>
-                <th>Status</th>
-                <th style="width:320px;"></th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var s in Model.Pending)
-        {
-            <tr>
-                <td>@s.GivenName @s.FamilyName</td>
-                <td>@AgeBand(s.ClassYear)</td>
-                <td>
-                    @(string.IsNullOrWhiteSpace(s.School) ? "—" : s.School)
-                    @if (!string.IsNullOrWhiteSpace(s.Club))
-                    {
-                        @: / @s.Club
-                    }
-                </td>
-                <td>@PrettyDate(s.CreatedAt)</td>
-                <td>@s.Status</td>
-                <td>
-                    <!-- ✅ Same-folder route so it always resolves -->
-                    <a class="btn btn-sm btn-outline" asp-page="./Detail" asp-route-id="@s.Id">Review</a>
+  @if (Model.Pending == null || Model.Pending.Count == 0)
+  {
+      <div class="rk-empty">No pending submissions.</div>
+  }
+  else
+  {
+      <div class="rk-tablewrap sub-tablewrap">
+          <table class="rk-table sub-table">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Sport/Age</th>
+                      <th>School / Club</th>
+                      <th>Submitted</th>
+                      <th>Status</th>
+                      <th class="sub-actions-col"></th>
+                  </tr>
+              </thead>
+              <tbody>
+              @foreach (var s in Model.Pending)
+              {
+                  <tr>
+                      <td class="sub-name">@s.GivenName @s.FamilyName</td>
+                      <td>@AgeBand(s.ClassYear)</td>
+                      <td>
+                          @(string.IsNullOrWhiteSpace(s.School) ? "—" : s.School)
+                          @if (!string.IsNullOrWhiteSpace(s.Club))
+                          {
+                              @: / @s.Club
+                          }
+                      </td>
+                      <td>@PrettyDate(s.CreatedAt)</td>
+                      <td><span class="sub-badge">@s.Status</span></td>
+                      <td class="sub-actions">
+                          <!-- ✅ FIX: route to the existing page file "Details.cshtml" in the same folder -->
+                          <a class="btn btn-sm btn-outline" asp-page="./Detail" asp-route-id="@s.Id">Review</a>
 
-                    <form method="post" asp-page-handler="Approve" class="d-inline ms-2">
-                        <input type="hidden" name="id" value="@s.Id" />
-                        <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                    </form>
+                          <form method="post" asp-page-handler="Approve">
+                              <input type="hidden" name="id" value="@s.Id" />
+                              <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                          </form>
 
-                    <form method="post" asp-page-handler="Reject" class="d-inline ms-2">
-                        <input type="hidden" name="id" value="@s.Id" />
-                        <button type="submit" class="btn btn-sm btn-danger">Reject</button>
-                    </form>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+                          <form method="post" asp-page-handler="Reject">
+                              <input type="hidden" name="id" value="@s.Id" />
+                              <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                          </form>
+                      </td>
+                  </tr>
+              }
+              </tbody>
+          </table>
+      </div>
+  }
+</section>
